@@ -36,11 +36,13 @@ const levels = [
   getLevelData().level4,
   getLevelData().level5,
   getLevelData().level6,
+  getLevelData().level7,
+  getLevelData().level8,
 ];
 
 // Spelstatus object
 const gameState = {
-  currentScreen: 5, // Huidig level (0 = eerste level)
+  currentScreen: 6, // Huidig level (0 = eerste level)
   screenTransition: {
     active: false, // Of er een level overgang bezig is
     offset: 0, // Verschuiving tijdens overgang
@@ -52,7 +54,7 @@ const gameState = {
 const blok = {
   x: TARGET_WIDTH / 2 - 25, // Start positie horizontaal (midden)
   y: TARGET_HEIGHT - GROUND_HEIGHT - 50, // Start positie verticaal
-  breedte: 45, // Breedte van speler
+  breedte: 40, // Breedte van speler
   hoogte: 50, // Hoogte van speler
   kleur: "red", // Kleur van speler
   normalColor: "red", // Add this line
@@ -79,6 +81,10 @@ const blok = {
   bounceStrength: 0.47, // Stuiter sterkte tegen muren
   walkSpeed: 1.2, // Loop snelheid
   isWalking: false, // Of speler loopt
+  isOnSlide: false,
+  slideSpeed: 0,
+  maxSlideSpeed: 3,
+  slideAcceleration: 0.1,
 };
 
 // Toetsenbord status
@@ -89,6 +95,7 @@ const keyboard = {
 };
 
 // Controleert en handelt platform botsingen af
+// Update de botsing met de ramp om de snelheid te reguleren
 function checkPlatformCollisions(nextX, nextY) {
   const currentLevel = levels[gameState.currentScreen];
 
@@ -103,12 +110,12 @@ function checkPlatformCollisions(nextX, nextY) {
         blok.opGrond = true;
         return { x: nextX, y: nextY };
       }
-      // Stoten tegen plafond
+
       // Stoten tegen plafond
       if (blok.y >= platform.y + platform.height && nextY < platform.y + platform.height) {
         nextY = platform.y + platform.height;
         blok.snelheidY = 0;
-        blok.snelheidX *= 0.5; // Reduce horizontal speed by 50% when hitting ceiling
+        blok.snelheidX *= 0.5;
         return { x: nextX, y: nextY };
       }
     }
@@ -116,19 +123,107 @@ function checkPlatformCollisions(nextX, nextY) {
     // Horizontale botsingsdetectie (muren)
     if (nextY + blok.hoogte > platform.y && nextY < platform.y + platform.height) {
       // Linker muur botsing
-      if (blok.x + blok.breedte <= platform.x && nextX + blok.breedte > platform.x) {
+      if (blok.x + blok.breedte <= platform.x + 2 && nextX + blok.breedte > platform.x) {
         nextX = platform.x - blok.breedte;
         handleWallCollision(true);
       }
       // Rechter muur botsing
-      if (blok.x >= platform.x + platform.width && nextX < platform.x + platform.width) {
+      if (blok.x >= platform.x + platform.width - 2 && nextX < platform.x + platform.width) {
         nextX = platform.x + platform.width;
         handleWallCollision(false);
       }
     }
   }
 
+  if (currentLevel.slides) {
+    let onAnySlide = false;
+    for (const slide of currentLevel.slides) {
+      const p1 = { x: slide.x, y: slide.y };
+      const p2 = { x: slide.x + slide.width, y: slide.y + slide.height };
+      const p3 = { x: slide.x, y: slide.y + slide.height };
+
+      const playerBottom = { x: nextX + blok.breedte / 2, y: nextY + blok.hoogte };
+
+      if (
+        isPointInTriangle(
+          playerBottom,
+          { x: p1.x - 20, y: p1.y - 20 },
+          { x: p2.x + 20, y: p2.y - 20 },
+          { x: p3.x - 20, y: p3.y + 20 }
+        )
+      ) {
+        onAnySlide = true;
+        console.log("Collision check: On slide");
+        keyboard.ArrowLeft = false;
+        keyboard.ArrowRight = false;
+        keyboard.Space = false;
+        blok.isWalking = false;
+
+        const slope = slide.height / slide.width;
+        const angle = Math.atan(slope);
+
+        // Enhanced momentum preservation for upward movement
+        if (Math.abs(blok.snelheidY) > 2.0) {
+          blok.snelheidX = Math.abs(blok.snelheidY) * Math.cos(angle) * 1.2; // Increased multiplier
+          if (blok.snelheidY < 0) {
+            blok.snelheidX *= -1.2; // Extra boost for upward movement
+          }
+        } else if (Math.abs(blok.snelheidX) < 1.0) {
+          blok.snelheidX = 1.0;
+        }
+
+        const relativeX = nextX - slide.x;
+        const targetY = slide.y + relativeX * slope - blok.hoogte;
+
+        nextY += (targetY - nextY) * 0.15; // Smoother transition
+
+        const gravityEffect = blok.zwaartekracht * Math.sin(angle) * 0.6; // Reduced gravity effect
+
+        blok.snelheidX += gravityEffect;
+        blok.snelheidX = Math.max(-3.0, Math.min(blok.snelheidX, 3.0)); // Increased speed limits
+        blok.snelheidY = slope * blok.snelheidX;
+
+        blok.opGrond = true;
+        blok.isOnSlide = true;
+        return { x: nextX, y: nextY };
+      }
+    }
+    if (!onAnySlide) {
+      blok.isOnSlide = false;
+    }
+  }
+
   return { x: nextX, y: nextY };
+}
+function isPlayerOnSlide() {
+  const currentLevel = levels[gameState.currentScreen];
+  if (!currentLevel.slides) return false;
+
+  const playerBottom = { x: blok.x + blok.breedte / 2, y: blok.y + blok.hoogte };
+
+  for (const slide of currentLevel.slides) {
+    const p1 = { x: slide.x, y: slide.y };
+    const p2 = { x: slide.x + slide.width, y: slide.y + slide.height };
+    const p3 = { x: slide.x, y: slide.y + slide.height };
+
+    if (isPointInTriangle(playerBottom, p1, p2, p3)) {
+      console.log("Position check: ", {
+        playerX: playerBottom.x,
+        playerY: playerBottom.y,
+        slideTop: p1.y,
+        slideBottom: p3.y,
+      });
+      return true;
+    }
+  }
+  return false;
+}
+
+function isPointInTriangle(p, p1, p2, p3) {
+  const area = 0.5 * (-p2.y * p3.x + p1.y * (-p2.x + p3.x) + p1.x * (p2.y - p3.y) + p2.x * p3.y);
+  const s = (1 / (2 * area)) * (p1.y * p3.x - p1.x * p3.y + (p3.y - p1.y) * p.x + (p1.x - p3.x) * p.y);
+  const t = (1 / (2 * area)) * (p1.x * p2.y - p1.y * p2.x + (p1.y - p2.y) * p.x + (p2.x - p1.x) * p.y);
+  return s > 0 && t > 0 && 1 - s - t > 0;
 }
 
 // Update de springkracht tijdens opladen
@@ -169,13 +264,38 @@ function executeJump() {
     blok.isWalking = false;
   }
 }
+window.addEventListener("blur", () => {
+  keyboard.ArrowLeft = false;
+  keyboard.ArrowRight = false;
+  keyboard.Space = false;
+});
 
 // Handel muurbotsingen af
 function handleWallCollision(isLeftWall) {
   blok.snelheidX *= -blok.bounceStrength; // Keer richting om met verminderde snelheid
   blok.springKracht *= blok.bounceStrength; // Verminder springkracht
+  blok.snelheidY *= 0.98;
 }
 
+// Hoofdspellus
+function spelLus() {
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+  const scaleX = canvas.width / TARGET_WIDTH;
+  const scaleY = canvas.height / TARGET_HEIGHT;
+  ctx.scale(scaleX, scaleY);
+
+  // Add this line to continuously check slide state
+  if (isPlayerOnSlide()) {
+    console.log("On slide - continuous check");
+  }
+
+  drawScreen(gameState.currentScreen, 0);
+  ctx.fillStyle = blok.kleur;
+  ctx.fillRect(blok.x, blok.y, blok.breedte, blok.hoogte);
+  ctx.setTransform(1, 0, 0, 1, 0, 0);
+  updateBlok();
+  requestAnimationFrame(spelLus);
+}
 // Update alle beweging en physics van de speler
 function updateBlok() {
   updateJumpCharge();
@@ -194,7 +314,6 @@ function updateBlok() {
   }
 
   // Check stun recovery
-  // In updateBlok()
   if (blok.isStunned) {
     blok.kleur = blok.stunnedColor;
     if (Date.now() - blok.stunTimer >= blok.stunDuration) {
@@ -203,42 +322,26 @@ function updateBlok() {
     }
     return;
   } else {
-    blok.kleur = blok.normalColor; // Add this line to ensure color reset
+    blok.kleur = blok.normalColor;
   }
 
   // Horizontale beweging op de grond
+
+  // Horizontale beweging op de grond
+  // Horizontale beweging op de grond
   if (blok.opGrond && !blok.isChargingJump) {
-    let nextPosition = blok.x;
-
-    // Beweeg links of rechts
-    if (keyboard.ArrowLeft) {
-      nextPosition = blok.x - blok.walkSpeed;
-    }
-    if (keyboard.ArrowRight) {
-      nextPosition = blok.x + blok.walkSpeed;
-    }
-
-    const currentLevel = levels[gameState.currentScreen];
-    let canMove = true;
-
-    // Check of nieuwe positie vrij is
-    for (const platform of currentLevel.platforms) {
-      if (
-        nextPosition + blok.breedte > platform.x &&
-        nextPosition < platform.x + platform.width &&
-        blok.y + blok.hoogte > platform.y &&
-        blok.y < platform.y + platform.height
-      ) {
-        canMove = false;
-        break;
+    // Skip all walking logic if on slide
+    if (!isPlayerOnSlide()) {
+      let nextPosition = blok.x;
+      if (keyboard.ArrowLeft) {
+        nextPosition = blok.x - blok.walkSpeed;
+        blok.jumpDirection = -1;
       }
-    }
-
-    // Beweeg speler als er geen obstakel is
-    if (canMove) {
+      if (keyboard.ArrowRight) {
+        nextPosition = blok.x + blok.walkSpeed;
+        blok.jumpDirection = 1;
+      }
       blok.x = nextPosition;
-      if (keyboard.ArrowLeft) blok.jumpDirection = -1;
-      if (keyboard.ArrowRight) blok.jumpDirection = 1;
     }
   }
 
@@ -263,14 +366,13 @@ function updateBlok() {
       gameState.currentScreen === 0 && Math.abs(blok.y + blok.hoogte - (TARGET_HEIGHT - GROUND_HEIGHT)) < 2;
 
     // Val als speler niet op platform/grond staat
-
     if (!isOnPlatform && !isOnGround) {
       blok.opGrond = false;
       blok.snelheidY = 0.1;
       if (keyboard.ArrowLeft) {
-        blok.snelheidX = -1.33; // Increased from -2
+        blok.snelheidX = -1.33;
       } else if (keyboard.ArrowRight) {
-        blok.snelheidX = 1.33; // Increased from 2
+        blok.snelheidX = 1.33;
       }
     }
   }
@@ -330,7 +432,7 @@ function updateBlok() {
 // Toetsenbord event listeners
 // Toetsenbord event listeners
 window.addEventListener("keydown", (e) => {
-  if (!blok.opGrond) return;
+  if (!blok.opGrond || blok.isOnSlide) return; // Changed isPlayerOnSlide() to blok.isOnSlide
   keyboard[e.code] = true;
   if (e.code === "Space" && !blok.isChargingJump) {
     blok.isChargingJump = true;
@@ -345,6 +447,49 @@ window.addEventListener("keyup", (e) => {
     executeJump();
   }
 });
+function checkRampCollisions(nextX, nextY) {
+  const currentLevel = levels[gameState.currentScreen];
+
+  for (const ramp of currentLevel.ramps) {
+    const p1 = { x: ramp.x, y: ramp.y };
+    const p2 = { x: ramp.x + ramp.width, y: ramp.y + ramp.height };
+
+    const angle = Math.atan(ramp.height / ramp.width);
+    const speedAlongRamp = Math.sqrt(blok.snelheidX * blok.snelheidX + blok.snelheidY * blok.snelheidY);
+
+    if (
+      nextX + blok.breedte / 2 >= ramp.x &&
+      nextX + blok.breedte / 2 <= ramp.x + ramp.width &&
+      nextY + blok.hoogte > ramp.y &&
+      nextY < ramp.y + ramp.height
+    ) {
+      const friction = 0.05;
+      if (speedAlongRamp > 0.5) {
+        blok.snelheidX -= Math.sign(blok.snelheidX) * friction;
+        blok.snelheidY -= Math.sign(blok.snelheidY) * friction;
+      }
+
+      nextY = ramp.y + Math.tan(angle) * (nextX - ramp.x);
+
+      blok.snelheidY = Math.sin(angle) * speedAlongRamp;
+      blok.snelheidX = Math.cos(angle) * speedAlongRamp;
+
+      // Zorg ervoor dat de snelheid niet te hoog wordt
+      const maxRampSpeed = 1.5; // Pas deze waarde aan indien nodig
+      blok.snelheidX = Math.max(-maxRampSpeed, Math.min(blok.snelheidX, maxRampSpeed));
+      blok.snelheidY = Math.max(-maxRampSpeed, Math.min(blok.snelheidY, maxRampSpeed));
+
+      if (Math.abs(blok.snelheidX) < 0.1 && Math.abs(blok.snelheidY) < 0.1) {
+        blok.snelheidX = 0;
+        blok.snelheidY = 0;
+      }
+
+      return { x: nextX, y: nextY };
+    }
+  }
+
+  return { x: nextX, y: nextY };
+}
 
 // Teken het huidige level
 function drawScreen(screenIndex, offset) {
@@ -357,29 +502,23 @@ function drawScreen(screenIndex, offset) {
   for (const platform of level.platforms) {
     ctx.fillRect(platform.x, platform.y - offset, platform.width, platform.height);
   }
-}
-
-// Hoofdspellus
-function spelLus() {
-  // Maak canvas leeg
-  ctx.clearRect(0, 0, canvas.width, canvas.height);
-
-  // Schaal context voor juiste ratio
-  const scaleX = canvas.width / TARGET_WIDTH;
-  const scaleY = canvas.height / TARGET_HEIGHT;
-  ctx.scale(scaleX, scaleY);
-
-  // Teken level en speler
-  drawScreen(gameState.currentScreen, 0);
-  ctx.fillStyle = blok.kleur;
-  ctx.fillRect(blok.x, blok.y, blok.breedte, blok.hoogte);
-
-  // Reset transformatie
-  ctx.setTransform(1, 0, 0, 1, 0, 0);
-
-  // Update speler en vraag volgende frame aan
-  updateBlok();
-  requestAnimationFrame(spelLus);
+  if (level.slides) {
+    ctx.fillStyle = "#888888";
+    for (const slide of level.slides) {
+      ctx.beginPath();
+      ctx.moveTo(slide.x, slide.y);
+      ctx.lineTo(slide.x + slide.width, slide.y + slide.height);
+      ctx.lineTo(slide.x, slide.y + slide.height);
+      ctx.closePath();
+      ctx.fill();
+    }
+  }
+  // Debug visualization
+  ctx.fillStyle = "yellow";
+  const playerBottom = { x: blok.x + blok.breedte / 2, y: blok.y + blok.hoogte };
+  ctx.beginPath();
+  ctx.arc(playerBottom.x, playerBottom.y, 3, 0, Math.PI * 2);
+  ctx.fill();
 }
 
 // Luister naar schermgrootte veranderingen
