@@ -35,11 +35,12 @@ const levels = [
   getLevelData().level3,
   getLevelData().level4,
   getLevelData().level5,
+  getLevelData().level6,
 ];
 
 // Spelstatus object
 const gameState = {
-  currentScreen: 4, // Huidig level (0 = eerste level)
+  currentScreen: 5, // Huidig level (0 = eerste level)
   screenTransition: {
     active: false, // Of er een level overgang bezig is
     offset: 0, // Verschuiving tijdens overgang
@@ -64,7 +65,7 @@ const blok = {
   snelheidX: 0, // Horizontale bewegingssnelheid
   snelheidY: 0, // Verticale bewegingssnelheid
   zwaartekracht: 0.1, // Zwaartekracht
-  // zwaartekracht: -0.0001, // Valsnelheid
+  //zwaartekracht: -0.0001, // Valsnelheid
   springKracht: 0, // Huidige springkracht
   minJumpForce: 0.7,
   maxJumpForce: 6.17,
