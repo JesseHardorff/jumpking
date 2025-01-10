@@ -59,7 +59,7 @@ const LEVEL_DATA = {
       { x: 654, y: TARGET_HEIGHT - 573, width: 32, height: 179 },
       { x: 654, y: TARGET_HEIGHT - 573, width: 142, height: 32 },
       { x: 654, y: MAX_HEIGHT, width: 32, height: 31 },
-      { x: MAX_RIGHT - 95, y: TARGET_HEIGHT - 460, width: 80, height: 32 },
+      { x: MAX_RIGHT - 95, y: TARGET_HEIGHT - 450, width: 80, height: 32 },
 
       { x: MAX_LEFT, y: 0, width: 15, height: TARGET_HEIGHT },
       { x: MAX_RIGHT - 15, y: 0, width: 15, height: TARGET_HEIGHT },
@@ -68,7 +68,8 @@ const LEVEL_DATA = {
   level5: {
     ground: { y: TARGET_HEIGHT + 100, height: 0 }, // Ground hidden below view
     platforms: [
-      { x: 415, y: TARGET_HEIGHT - 112, width: 97, height: 33 },
+      { x: 654, y: TARGET_HEIGHT - 573, width: 32, height: 179 },
+      { x: 270, y: MAX_HEIGHT, width: 31, height: 175 },
 
       { x: MAX_LEFT, y: 0, width: 15, height: TARGET_HEIGHT },
       { x: MAX_RIGHT - 15, y: 0, width: 15, height: TARGET_HEIGHT },
