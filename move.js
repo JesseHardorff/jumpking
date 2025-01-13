@@ -59,7 +59,8 @@ const blok = {
   stunDuration: 800,
   snelheidX: 0,
   snelheidY: 0,
-  zwaartekracht: 0.1,
+  // zwaartekracht: 0.1,
+  zwaartekracht: -0.0001,
   springKracht: 0,
   minJumpForce: 0.7,
   maxJumpForce: 6.17,
@@ -104,65 +105,27 @@ function checkPlatformCollisions(nextX, nextY) {
         )
       ) {
         const slope = (triangle.y2 - triangle.y1) / (triangle.x2 - triangle.x1);
-        const angle = Math.atan(slope);
+        const directionMultiplier = triangle.direction === "right" ? 1 : -1;
 
-        // Adjust direction based on triangle configuration
-        // Inside the triangle collision section
-        const isRightSlide = triangle.direction === "right";
-        const directionMultiplier = isRightSlide ? 1 : -1;
-
-        // Standardize the speed calculations
-        const baseSpeed = 0.8;
-        const upwardMultiplier = 0.4;
-
+        // Reset vertical speed when landing
         if (Math.abs(blok.snelheidY) > 2.0) {
-          blok.snelheidX = Math.abs(blok.snelheidY) * Math.cos(angle) * baseSpeed * directionMultiplier;
-
-          if (blok.snelheidY < 0) {
-            const upwardAcceleration = Math.abs(blok.snelheidY) * upwardMultiplier;
-            // Adjust upward acceleration based on direction
-            const directionAdjustedAcceleration = isRightSlide ? upwardAcceleration : upwardAcceleration * 0.5;
-            blok.snelheidX =
-              (-baseSpeed - directionAdjustedAcceleration) *
-              Math.abs(blok.snelheidY) *
-              Math.cos(angle) *
-              directionMultiplier;
-          }
+          blok.snelheidX = 0;
         }
 
-        // Set consistent speed limits for both directions
+        // Gradually increase speed
+        const acceleration = 0.1;
+        blok.snelheidX += acceleration * directionMultiplier;
+
+        // Limit maximum speed
         const maxSpeed = 3.0;
         blok.snelheidX = Math.max(-maxSpeed, Math.min(blok.snelheidX, maxSpeed));
 
+        // Calculate Y position on triangle
         const relativeX = nextX - triangle.x1;
         const targetY = triangle.y1 + relativeX * slope - blok.hoogte;
         nextY += (targetY - nextY) * 0.15;
 
-        const baseGravity = blok.zwaartekracht * Math.sin(angle) * 2.3;
-
-        // Add exponential acceleration when moving downward
-        
-        if (blok.snelheidX > 0) {
-          // Start with a small base acceleration
-          let acceleration = 0.1;
-
-          // Add increasing acceleration based on current speed
-          acceleration += blok.snelheidX * 0.15;
-
-          // Apply the acceleration
-          blok.snelheidX += baseGravity + acceleration;
-
-          // Higher max speed to allow for acceleration
-          const maxSpeed = 6.0;
-          blok.snelheidX = Math.min(blok.snelheidX, maxSpeed);
-        } else {
-          // Enhanced acceleration for upward movement
-          const upwardMultiplier = 1 + Math.abs(blok.snelheidX) * 0.3;
-          blok.snelheidX += baseGravity * upwardMultiplier;
-        }
-
-        // Adjusted speed limits
-
+        // Update vertical speed based on slope
         blok.snelheidY = slope * blok.snelheidX;
 
         return { x: nextX, y: nextY };

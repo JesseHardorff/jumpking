@@ -115,28 +115,47 @@ const LEVEL_DATA = {
   level7: {
     ground: { y: MIN_HEIGHT + 100, height: 0 },
     platforms: [
-      { x: 304, y: MIN_HEIGHT - 62, width: 350, height: 62 },
+      { x: MAX_RIGHT - 220, y: MIN_HEIGHT - 30, width: 110, height: 30 },
+      { x: MAX_RIGHT - 220, y: MIN_HEIGHT - 301, width: 110, height: 30 },
+      { x: MAX_RIGHT - 380, y: MIN_HEIGHT - 301, width: 161, height: 301 },
+
+      { x: MAX_RIGHT - 190, y: MIN_HEIGHT - 495, width: 175, height: 47 },
+      { x: MAX_RIGHT - 190, y: MAX_HEIGHT, width: 175, height: 222 },
+      { x: MAX_RIGHT - 380, y: MIN_HEIGHT - 495, width: 191, height: 96 },
+
+      { x: MAX_LEFT + 305, y: MAX_HEIGHT + 315, width: 77, height: 70 },
+      { x: MAX_LEFT + 305, y: MAX_HEIGHT, width: 155, height: 316 },
+      { x: MAX_LEFT + 459, y: MAX_HEIGHT, width: 130, height: 35 },
+      { x: MAX_LEFT + 207, y: MAX_HEIGHT + 140, width: 99, height: 65 },
+      { x: MAX_LEFT + 253, y: MAX_HEIGHT + 97, width: 53, height: 65 },
+
+      { x: MAX_LEFT + 15, y: MAX_HEIGHT, width: 160, height: 33 },
+      { x: MAX_LEFT + 15, y: MAX_HEIGHT + 477, width: 190, height: 239 },
+      { x: MAX_LEFT + 15, y: MAX_HEIGHT + 335, width: 50, height: 150 },
+
+      { x: MAX_LEFT + 375, y: MAX_HEIGHT + 480, width: 40, height: 32 },
+
       { x: MAX_LEFT, y: 0, width: 15, height: MIN_HEIGHT },
       { x: MAX_RIGHT - 15, y: 0, width: 15, height: MIN_HEIGHT },
     ],
     triangles: [
       {
-        x1: 100,
-        y1: 300, // Start point
-        x2: 300,
-        y2: 400, // End point
-        x3: 100,
-        y3: 400, // Bottom point
-        direction: "right", // Slides right
+        x1: 770,
+        y1: MIN_HEIGHT - 685, // Start point
+        x2: MAX_RIGHT - 380,
+        y2: MIN_HEIGHT - 494, // End point
+        x3: 770,
+        y3: MIN_HEIGHT - 494, // Bottom point
+        direction: "left", // Slides right
       },
       {
-        x1: 800,
-        y1: 400, // Start point
-        x2: 600,
-        y2: 500, // End point
-        x3: 800,
-        y3: 500, // Bottom point
-        direction: "left", // Slides left
+        x1: 380,
+        y1: MIN_HEIGHT - 130, // Start point
+        x2: MAX_RIGHT - 685,
+        y2: MIN_HEIGHT - 237, // End point
+        x3: 380,
+        y3: MIN_HEIGHT - 237, // Bottom point
+        direction: "left", // Slides right
       },
     ],
   },
