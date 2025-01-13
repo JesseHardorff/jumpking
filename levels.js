@@ -113,23 +113,34 @@ const LEVEL_DATA = {
     ],
   },
   level7: {
-    ground: { y: MIN_HEIGHT + 100, height: 0 }, // Ground hidden below view
+    ground: { y: MIN_HEIGHT + 100, height: 0 },
     platforms: [
       { x: 304, y: MIN_HEIGHT - 62, width: 350, height: 62 },
-
       { x: MAX_LEFT, y: 0, width: 15, height: MIN_HEIGHT },
       { x: MAX_RIGHT - 15, y: 0, width: 15, height: MIN_HEIGHT },
     ],
-    slides: [
+    triangles: [
       {
-        x: 200,
-        y: MIN_HEIGHT - 200,
-        width: 200,
-        height: 100,
-        angle: 45, // angle in degrees for the slide
+        x1: 100,
+        y1: 300, // Start point
+        x2: 300,
+        y2: 400, // End point
+        x3: 100,
+        y3: 400, // Bottom point
+        direction: "right", // Slides right
+      },
+      {
+        x1: 800,
+        y1: 400, // Start point
+        x2: 600,
+        y2: 500, // End point
+        x3: 800,
+        y3: 500, // Bottom point
+        direction: "left", // Slides left
       },
     ],
   },
+
   level8: {
     ground: { y: MIN_HEIGHT + 100, height: 0 }, // Ground hidden below view
     platforms: [
