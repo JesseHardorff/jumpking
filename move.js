@@ -42,11 +42,12 @@ const levels = [
 
 // Spelstatus object
 const gameState = {
-  currentScreen: 6, // Huidig level (0 = eerste level)
+  currentScreen: 0,
+  adminMode: false, // Add this line
   screenTransition: {
-    active: false, // Of er een level overgang bezig is
-    offset: 0, // Verschuiving tijdens overgang
-    targetOffset: 0, // Doel verschuiving
+    active: false,
+    offset: 0,
+    targetOffset: 0,
   },
 };
 
@@ -89,9 +90,12 @@ const blok = {
 
 // Toetsenbord status
 const keyboard = {
-  ArrowLeft: false, // Pijl links ingedrukt
-  ArrowRight: false, // Pijl rechts ingedrukt
-  Space: false, // Spatiebalk ingedrukt
+  ArrowLeft: false,
+  ArrowRight: false,
+  Space: false,
+  ArrowUp: false, // Add these new controls
+  ArrowDown: false,
+  KeyP: false,
 };
 
 // Controleert en handelt platform botsingen af
@@ -276,9 +280,19 @@ function handleWallCollision(isLeftWall) {
   blok.springKracht *= blok.bounceStrength; // Verminder springkracht
   blok.snelheidY *= 0.98;
 }
-
+// let frameCount = 0;
+// let lastTime = performance.now();
 // Hoofdspellus
 function spelLus() {
+  // Add this inside the spelLus function, right before requestAnimationFrame:
+  // frameCount++;
+  // const currentTime = performance.now();
+  // if (currentTime - lastTime >= 1000) {
+  //   console.log(`FPS: ${frameCount}`);
+  //   frameCount = 0;
+  //   lastTime = currentTime;
+  // }
+
   ctx.clearRect(0, 0, canvas.width, canvas.height);
   const scaleX = canvas.width / TARGET_WIDTH;
   const scaleY = canvas.height / TARGET_HEIGHT;
@@ -298,6 +312,32 @@ function spelLus() {
 }
 // Update alle beweging en physics van de speler
 function updateBlok() {
+  if (gameState.adminMode) {
+    const flySpeed = 5;
+    if (keyboard.ArrowLeft) blok.x -= flySpeed;
+    if (keyboard.ArrowRight) blok.x += flySpeed;
+    if (keyboard.ArrowUp) {
+      blok.y -= flySpeed;
+      // Level transition when flying up
+      if (blok.y + blok.hoogte < 0 && gameState.currentScreen < levels.length - 1) {
+        blok.y = TARGET_HEIGHT + blok.y;
+        gameState.currentScreen++;
+      }
+    }
+    if (keyboard.ArrowDown) {
+      blok.y += flySpeed;
+      // Level transition when flying down
+      if (blok.y > TARGET_HEIGHT && gameState.currentScreen > 0) {
+        blok.y = blok.y - TARGET_HEIGHT;
+        gameState.currentScreen--;
+      }
+    }
+    blok.snelheidX = 0;
+    blok.snelheidY = 0;
+    blok.opGrond = true;
+    return;
+  }
+
   updateJumpCharge();
 
   // Track falling and handle stun
@@ -430,14 +470,23 @@ function updateBlok() {
 }
 
 // Toetsenbord event listeners
-// Toetsenbord event listeners
 window.addEventListener("keydown", (e) => {
-  if (!blok.opGrond || blok.isOnSlide) return; // Changed isPlayerOnSlide() to blok.isOnSlide
   keyboard[e.code] = true;
-  if (e.code === "Space" && !blok.isChargingJump) {
-    blok.isChargingJump = true;
-    blok.jumpChargeTime = 0;
-    blok.springKracht = 0;
+
+  // Toggle admin mode with P key
+  if (e.code === "KeyP") {
+    gameState.adminMode = !gameState.adminMode;
+    blok.snelheidX = 0;
+    blok.snelheidY = 0;
+  }
+
+  if (!gameState.adminMode) {
+    if (!blok.opGrond || blok.isOnSlide) return;
+    if (e.code === "Space" && !blok.isChargingJump) {
+      blok.isChargingJump = true;
+      blok.jumpChargeTime = 0;
+      blok.springKracht = 0;
+    }
   }
 });
 
@@ -514,11 +563,11 @@ function drawScreen(screenIndex, offset) {
     }
   }
   // Debug visualization
-  ctx.fillStyle = "yellow";
-  const playerBottom = { x: blok.x + blok.breedte / 2, y: blok.y + blok.hoogte };
-  ctx.beginPath();
-  ctx.arc(playerBottom.x, playerBottom.y, 3, 0, Math.PI * 2);
-  ctx.fill();
+  // ctx.fillStyle = "yellow";
+  // const playerBottom = { x: blok.x + blok.breedte / 2, y: blok.y + blok.hoogte };
+  // ctx.beginPath();
+  // ctx.arc(playerBottom.x, playerBottom.y, 3, 0, Math.PI * 2);
+  // ctx.fill();
 }
 
 // Luister naar schermgrootte veranderingen

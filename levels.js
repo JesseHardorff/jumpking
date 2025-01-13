@@ -21,7 +21,6 @@ const LEVEL_DATA = {
   level2: {
     ground: { y: MIN_HEIGHT + 100, height: 0 }, // Ground hidden below view
     platforms: [
-      { x: 590, y: TARGET_HEIGHT - 130, width: 195, height: 70 },
       { x: 590, y: MIN_HEIGHT - 130, width: 195, height: 70 },
       { x: 510, y: MIN_HEIGHT - 320, width: 150, height: 70 },
       { x: 814, y: MIN_HEIGHT - 320, width: 130, height: 70 },
@@ -97,8 +96,43 @@ const LEVEL_DATA = {
       { x: 304, y: MIN_HEIGHT - 62, width: 350, height: 62 },
 
       { x: MAX_RIGHT - 380, y: MIN_HEIGHT - 558, width: 366, height: 350 },
-      { x: MAX_RIGHT - 380, y: MAX_HEIGHT, width: 190, height: 48 },
+      { x: MAX_RIGHT - 305, y: MAX_HEIGHT, width: 195, height: 77 },
+      { x: MAX_RIGHT - 380, y: MAX_HEIGHT, width: 195, height: 47 },
 
+      { x: MAX_RIGHT - 700, y: MIN_HEIGHT - 238, width: 90, height: 30 },
+      { x: MAX_LEFT, y: MIN_HEIGHT - 350, width: 110, height: 30 },
+      { x: MAX_LEFT + 15, y: MAX_HEIGHT, width: 368, height: 30 },
+      { x: 273, y: MAX_HEIGHT, width: 110, height: 110 },
+
+      { x: MAX_RIGHT - 800, y: MIN_HEIGHT - 492, width: 225, height: 32 },
+      { x: MAX_RIGHT - 800, y: MIN_HEIGHT - 573, width: 30, height: 82 },
+      { x: MAX_RIGHT - 845, y: MIN_HEIGHT - 573, width: 50, height: 30 },
+
+      { x: MAX_LEFT, y: 0, width: 15, height: MIN_HEIGHT },
+      { x: MAX_RIGHT - 15, y: 0, width: 15, height: MIN_HEIGHT },
+    ],
+  },
+  level7: {
+    ground: { y: MIN_HEIGHT + 100, height: 0 }, // Ground hidden below view
+    platforms: [
+      { x: 304, y: MIN_HEIGHT - 62, width: 350, height: 62 },
+
+      { x: MAX_LEFT, y: 0, width: 15, height: MIN_HEIGHT },
+      { x: MAX_RIGHT - 15, y: 0, width: 15, height: MIN_HEIGHT },
+    ],
+    slides: [
+      {
+        x: 200,
+        y: MIN_HEIGHT - 200,
+        width: 200,
+        height: 100,
+        angle: 45, // angle in degrees for the slide
+      },
+    ],
+  },
+  level8: {
+    ground: { y: MIN_HEIGHT + 100, height: 0 }, // Ground hidden below view
+    platforms: [
       { x: MAX_LEFT, y: 0, width: 15, height: MIN_HEIGHT },
       { x: MAX_RIGHT - 15, y: 0, width: 15, height: MIN_HEIGHT },
     ],
