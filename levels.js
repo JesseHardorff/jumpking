@@ -134,6 +134,7 @@ const LEVEL_DATA = {
       { x: MAX_LEFT + 15, y: MAX_HEIGHT + 335, width: 50, height: 150 },
 
       { x: MAX_LEFT + 375, y: MAX_HEIGHT + 480, width: 40, height: 32 },
+      { x: MAX_RIGHT - 685, y: MIN_HEIGHT - 237, width: 140, height: 3 },
 
       { x: MAX_LEFT, y: 0, width: 15, height: MIN_HEIGHT },
       { x: MAX_RIGHT - 15, y: 0, width: 15, height: MIN_HEIGHT },
@@ -146,16 +147,43 @@ const LEVEL_DATA = {
         y2: MIN_HEIGHT - 494, // End point
         x3: 770,
         y3: MIN_HEIGHT - 494, // Bottom point
-        direction: "left", // Slides right
+        direction: "left",
       },
       {
         x1: 380,
         y1: MIN_HEIGHT - 130, // Start point
         x2: MAX_RIGHT - 685,
-        y2: MIN_HEIGHT - 237, // End point
+        y2: MIN_HEIGHT - 236, // End point
         x3: 380,
-        y3: MIN_HEIGHT - 237, // Bottom point
-        direction: "left", // Slides right
+        y3: MIN_HEIGHT - 236, // Bottom point
+        direction: "right",
+      },
+      {
+        x1: 204,
+        y1: MIN_HEIGHT - 185, // Start point
+        x2: MAX_RIGHT - 580,
+        y2: MIN_HEIGHT, // End point
+        x3: 204,
+        y3: MIN_HEIGHT, // Bottom point
+        direction: "right",
+      },
+      {
+        x1: 65,
+        y1: MIN_HEIGHT - 380, // Start point
+        x2: MAX_RIGHT - 753,
+        y2: MIN_HEIGHT - 238, // End point
+        x3: 65,
+        y3: MIN_HEIGHT - 238, // Bottom point
+        direction: "right",
+      },
+      {
+        x1: 254,
+        y1: MIN_HEIGHT - 620, // Start point
+        x2: MAX_RIGHT - 753,
+        y2: MIN_HEIGHT - 575, // End point
+        x3: 254,
+        y3: MIN_HEIGHT - 575, // Bottom point
+        direction: "right",
       },
     ],
   },
