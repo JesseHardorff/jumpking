@@ -126,8 +126,8 @@ const LEVEL_DATA = {
       { x: MAX_LEFT + 305, y: MAX_HEIGHT + 315, width: 77, height: 70 },
       { x: MAX_LEFT + 305, y: MAX_HEIGHT, width: 155, height: 316 },
       { x: MAX_LEFT + 459, y: MAX_HEIGHT, width: 130, height: 35 },
-      { x: MAX_LEFT + 207, y: MAX_HEIGHT + 140, width: 99, height: 65 },
-      { x: MAX_LEFT + 253, y: MAX_HEIGHT + 97, width: 53, height: 65 },
+
+      { x: MAX_LEFT + 253, y: MAX_HEIGHT + 110, width: 53, height: 85 },
 
       { x: MAX_LEFT + 15, y: MAX_HEIGHT, width: 160, height: 33 },
       { x: MAX_LEFT + 15, y: MAX_HEIGHT + 477, width: 190, height: 239 },
@@ -142,7 +142,7 @@ const LEVEL_DATA = {
     triangles: [
       {
         x1: 770,
-        y1: MIN_HEIGHT - 685, // Start point
+        y1: MIN_HEIGHT - 655, // Start point
         x2: MAX_RIGHT - 380,
         y2: MIN_HEIGHT - 494, // End point
         x3: 770,
@@ -169,20 +169,11 @@ const LEVEL_DATA = {
       },
       {
         x1: 65,
-        y1: MIN_HEIGHT - 380, // Start point
+        y1: MIN_HEIGHT - 360, // Start point
         x2: MAX_RIGHT - 753,
         y2: MIN_HEIGHT - 238, // End point
         x3: 65,
         y3: MIN_HEIGHT - 238, // Bottom point
-        direction: "right",
-      },
-      {
-        x1: 254,
-        y1: MIN_HEIGHT - 620, // Start point
-        x2: MAX_RIGHT - 753,
-        y2: MIN_HEIGHT - 575, // End point
-        x3: 254,
-        y3: MIN_HEIGHT - 575, // Bottom point
         direction: "right",
       },
     ],
@@ -191,9 +182,204 @@ const LEVEL_DATA = {
   level8: {
     ground: { y: MIN_HEIGHT + 100, height: 0 }, // Ground hidden below view
     platforms: [
+      { x: MAX_RIGHT - 92, y: MIN_HEIGHT - 270, width: 77, height: 270 },
+      { x: MAX_RIGHT - 190, y: MIN_HEIGHT - 77, width: 100, height: 77 },
+
+      { x: MAX_RIGHT - 655, y: MIN_HEIGHT - 238, width: 190, height: 238 },
+      { x: MAX_RIGHT - 555, y: MIN_HEIGHT - 82, width: 185, height: 82 },
+
+      { x: MAX_RIGHT - 92, y: MAX_HEIGHT, width: 77, height: 174 },
+
+      { x: MAX_LEFT + 15, y: MAX_HEIGHT + 128, width: 50, height: 174 },
+      { x: MAX_LEFT + 15, y: MAX_HEIGHT + 285, width: 480, height: 80 },
+      { x: MAX_LEFT + 15, y: MAX_HEIGHT + 364, width: 130, height: 145 },
+      { x: MAX_LEFT + 15, y: MAX_HEIGHT + 508, width: 30, height: 179 },
+
+      { x: MAX_LEFT + 175, y: MAX_HEIGHT, width: 240, height: 174 },
+      { x: MAX_LEFT + 175, y: MAX_HEIGHT + 50, width: 320, height: 124 },
+
+      { x: MAX_LEFT + 15, y: MAX_HEIGHT + 686, width: 160, height: 30 },
+
       { x: MAX_LEFT, y: 0, width: 15, height: MIN_HEIGHT },
       { x: MAX_RIGHT - 15, y: 0, width: 15, height: MIN_HEIGHT },
     ],
+    triangles: [
+      {
+        x1: 867,
+        y1: MIN_HEIGHT - 175, // Start point
+        x2: 768,
+        y2: MIN_HEIGHT - 77, // End point
+        x3: 867,
+        y3: MIN_HEIGHT - 77, // Bottom point
+        direction: "left",
+      },
+      {
+        x1: 494,
+        y1: MIN_HEIGHT - 175, // Start point
+        x2: 590,
+        y2: MIN_HEIGHT - 82, // End point
+        x3: 494,
+        y3: MIN_HEIGHT - 82, // Bottom point
+        direction: "right",
+      },
+      {
+        x1: 415,
+        y1: MAX_HEIGHT, // Start point
+        x2: 495,
+        y2: MAX_HEIGHT + 50, // End point
+        x3: 415,
+        y3: MAX_HEIGHT + 50, // Bottom point
+        direction: "right",
+      },
+    ],
+  },
+
+  level9: {
+    ground: { y: MIN_HEIGHT + 100, height: 0 }, // Ground hidden below view
+    platforms: [
+      { x: MAX_LEFT + 15, y: MAX_HEIGHT, width: 190, height: 35 },
+
+      { x: MAX_LEFT + 305, y: MAX_HEIGHT, width: 140, height: 35 },
+      { x: MAX_LEFT + 415, y: MAX_HEIGHT, width: 30, height: 318 },
+      { x: MAX_LEFT + 415, y: MAX_HEIGHT + 192, width: 95, height: 126 },
+      { x: MAX_LEFT + 350, y: MAX_HEIGHT + 268, width: 80, height: 50 },
+
+      { x: MAX_LEFT + 785, y: MAX_HEIGHT, width: 160, height: 30 },
+
+      { x: MAX_LEFT + 785, y: MAX_HEIGHT + 192, width: 60, height: 60 },
+
+      { x: MAX_LEFT + 785, y: MAX_HEIGHT + 414, width: 62, height: 130 },
+
+      { x: MAX_LEFT + 594, y: MAX_HEIGHT + 414, width: 62, height: 130 },
+
+      { x: MAX_LEFT + 403, y: MAX_HEIGHT + 414, width: 62, height: 130 },
+
+      { x: MAX_LEFT + 175, y: MAX_HEIGHT + 175, width: 33, height: 250 },
+      { x: MAX_LEFT + 175, y: MAX_HEIGHT + 414, width: 94, height: 302 },
+
+      { x: MAX_LEFT + 15, y: MAX_HEIGHT + 335, width: 50, height: 46 },
+
+      { x: MAX_LEFT + 126, y: MAX_HEIGHT + 590, width: 50, height: 46 },
+
+      { x: MAX_LEFT, y: 0, width: 15, height: MIN_HEIGHT },
+      { x: MAX_RIGHT - 15, y: 0, width: 15, height: MIN_HEIGHT },
+    ],
+    triangles: [
+      {
+        x1: 268,
+        y1: MIN_HEIGHT - 175, // Start point
+        x2: 445,
+        y2: MIN_HEIGHT, // End point
+        x3: 268,
+        y3: MIN_HEIGHT, // Bottom point
+        direction: "right",
+      },
+      {
+        x1: MAX_RIGHT - 15,
+        y1: MIN_HEIGHT - 85, // Start point
+        x2: MAX_RIGHT - 100,
+        y2: MIN_HEIGHT, // End point
+        x3: MAX_RIGHT - 15,
+        y3: MIN_HEIGHT, // Bottom point
+        direction: "left",
+      },
+    ],
+  },
+  level10: {
+    ground: { y: MIN_HEIGHT + 100, height: 0 },
+    platforms: [
+      { x: MAX_RIGHT - 175, y: MIN_HEIGHT - 65, width: 200, height: 130 },
+
+      { x: MAX_RIGHT - 650, y: MIN_HEIGHT - 165, width: 135, height: 170 },
+
+      { x: MAX_LEFT, y: MIN_HEIGHT - 230, width: 110, height: 230 },
+
+      { x: MAX_LEFT + 15, y: MIN_HEIGHT - 70, width: 190, height: 70 },
+
+      { x: MAX_RIGHT - 800, y: MIN_HEIGHT - 390, width: 175, height: 60 },
+
+      { x: MAX_LEFT, y: MAX_HEIGHT, width: 334, height: 226 },
+
+      { x: MAX_LEFT + 594, y: MAX_HEIGHT + 214, width: 50, height: 130 },
+
+      { x: MAX_RIGHT - 189, y: MIN_HEIGHT - 690, width: 175, height: 340 },
+
+      { x: MAX_RIGHT - 334, y: MAX_HEIGHT, width: 60, height: 60 },
+      { x: MAX_RIGHT - 189, y: MAX_HEIGHT, width: 200, height: 60 },
+
+      { x: MAX_RIGHT - 800, y: MIN_HEIGHT - 630, width: 225, height: 60 },
+
+      { x: MAX_LEFT, y: 0, width: 15, height: MIN_HEIGHT },
+      { x: MAX_RIGHT - 15, y: 0, width: 15, height: MIN_HEIGHT },
+    ],
+    triangles: [
+      {
+        x1: 110,
+        y1: MIN_HEIGHT - 175, // Start point
+        x2: 206,
+        y2: MIN_HEIGHT - 70, // End   point
+        x3: 110,
+        y3: MIN_HEIGHT - 70, // Bottom point
+        direction: "right",
+      },
+    ],
+  },
+  level11: {
+    ground: { y: MIN_HEIGHT + 100, height: 0 },
+    platforms: [
+      { x: MAX_LEFT, y: MIN_HEIGHT - 60, width: 334, height: 60 },
+
+      { x: MAX_LEFT + 284, y: MIN_HEIGHT - 480, width: 50, height: 60 },
+
+      { x: MAX_RIGHT - 189, y: MIN_HEIGHT - 480, width: 50, height: 60 },
+
+      { x: MAX_RIGHT - 334, y: MIN_HEIGHT - 60, width: 60, height: 60 },
+      { x: MAX_RIGHT - 189, y: MIN_HEIGHT - 60, width: 200, height: 60 },
+    ],
+    triangles: [
+      {
+        x1: 0,
+        y1: MIN_HEIGHT - 175, // Start point
+        x2: 335,
+        y2: MIN_HEIGHT - 60, // End   point
+        x3: 0,
+        y3: MIN_HEIGHT - 60, // Bottom point
+        direction: "right",
+      },
+      {
+        x1: MAX_RIGHT,
+        y1: MIN_HEIGHT - 175, // Start point
+        x2: 770,
+        y2: MIN_HEIGHT - 60, // End   point
+        x3: MAX_RIGHT,
+        y3: MIN_HEIGHT - 60, // Bottom point
+        direction: "left",
+      },
+    ],
+  },
+  level12: {
+    ground: { y: MIN_HEIGHT + 100, height: 0 },
+    platforms: [
+      { x: MAX_RIGHT - 175, y: MIN_HEIGHT - 65, width: 200, height: 130 },
+
+      { x: MAX_RIGHT - 650, y: MIN_HEIGHT - 165, width: 135, height: 170 },
+
+      { x: MAX_LEFT, y: MIN_HEIGHT - 230, width: 110, height: 230 },
+
+      { x: MAX_LEFT + 15, y: MIN_HEIGHT - 70, width: 190, height: 70 },
+
+      { x: MAX_RIGHT - 800, y: MIN_HEIGHT - 390, width: 175, height: 60 },
+
+      { x: MAX_LEFT, y: MAX_HEIGHT, width: 334, height: 226 },
+
+      { x: MAX_LEFT + 594, y: MAX_HEIGHT + 214, width: 50, height: 130 },
+
+      { x: MAX_RIGHT - 189, y: MIN_HEIGHT - 690, width: 175, height: 60 },
+
+      { x: MAX_LEFT, y: 0, width: 15, height: MIN_HEIGHT },
+      { x: MAX_RIGHT - 15, y: 0, width: 15, height: MIN_HEIGHT },
+    ],
+    triangles: [],
   },
 };
 export function getLevelData() {

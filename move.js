@@ -32,11 +32,14 @@ const levels = [
   getLevelData().level6,
   getLevelData().level7,
   getLevelData().level8,
+  getLevelData().level9,
+  getLevelData().level10,
+  getLevelData().level11,
 ];
 
 const gameState = {
-  currentScreen: 6,
-  adminMode: false,
+  currentScreen: 10,
+  adminMode: true,
   screenTransition: {
     active: false,
     offset: 0,
@@ -60,7 +63,7 @@ const blok = {
   snelheidX: 0,
   snelheidY: 0,
   zwaartekracht: 0.1,
-  // zwaartekracht: -0.0001,
+  //zwaartekracht: -0.0001,
   springKracht: 0,
   minJumpForce: 0.7,
   maxJumpForce: 6.17,
@@ -90,6 +93,7 @@ const keyboard = {
 function checkPlatformCollisions(nextX, nextY) {
   const currentLevel = levels[gameState.currentScreen];
 
+  // In checkPlatformCollisions function, update the triangle collision check:
   if (currentLevel.triangles) {
     for (const triangle of currentLevel.triangles) {
       const playerBottom = {
@@ -97,33 +101,38 @@ function checkPlatformCollisions(nextX, nextY) {
         y: nextY + blok.hoogte,
       };
 
-      // Calculate slope based on direction
-      let slope;
-      if (triangle.direction === "right") {
-        slope = (triangle.y2 - triangle.y1) / (triangle.x2 - triangle.x1);
-      } else {
-        slope = (triangle.y2 - triangle.y1) / (triangle.x2 - triangle.x1);
-      }
+      const edgeBuffer = 5;
+      const inXBounds =
+        triangle.direction === "right"
+          ? nextX + blok.breedte >= triangle.x1 + edgeBuffer && nextX <= triangle.x2 - edgeBuffer
+          : nextX + blok.breedte >= triangle.x2 + edgeBuffer && nextX <= triangle.x1 - edgeBuffer;
 
-      // Calculate expected Y position
+      if (!inXBounds) continue;
+
+      const slope =
+        triangle.direction === "right"
+          ? (triangle.y2 - triangle.y1) / (triangle.x2 - triangle.x1)
+          : (triangle.y1 - triangle.y2) / (triangle.x1 - triangle.x2);
+
       const expectedY = triangle.y1 + slope * (playerBottom.x - triangle.x1);
 
-      // Check if we're within the triangle's x-bounds
-      const inXBounds = nextX + blok.breedte >= triangle.x1 && nextX <= triangle.x2;
+      // Increase collision threshold based on vertical speed
+      const speedBasedThreshold = Math.max(3, Math.abs(blok.snelheidY) * 1.5);
 
-      if (inXBounds && Math.abs(playerBottom.y - expectedY) < 10) {
+      // In checkPlatformCollisions function, update the triangle collision section:
+      if (Math.abs(playerBottom.y - expectedY) < speedBasedThreshold) {
         nextY = expectedY - blok.hoogte;
         const directionMultiplier = triangle.direction === "right" ? 1 : -1;
         blok.snelheidX += 0.1 * directionMultiplier;
         blok.snelheidX = Math.max(-3, Math.min(blok.snelheidX, 3));
-        blok.snelheidY = Math.abs(slope * blok.snelheidX);
+        // Remove the line that sets snelheidY based on slope
+        blok.snelheidY = 0; // Instead, just set vertical speed to 0
         blok.opGrond = true;
         return { x: nextX, y: nextY };
       }
     }
   }
 
-  // If we just left the triangle, apply stored momentum
   if (blok.lastTriangleSpeedX) {
     blok.snelheidX = blok.lastTriangleSpeedX;
     blok.snelheidY = blok.lastTriangleSpeedY;
@@ -131,14 +140,13 @@ function checkPlatformCollisions(nextX, nextY) {
     blok.lastTriangleSpeedY = null;
   }
 
-  // Regular platform collisions
   for (const platform of currentLevel.platforms) {
     if (nextX + blok.breedte > platform.x && nextX < platform.x + platform.width) {
       if (blok.y + blok.hoogte <= platform.y && nextY + blok.hoogte > platform.y) {
         nextY = platform.y - blok.hoogte;
         blok.snelheidY = 0;
         blok.snelheidX = 0;
-        blok.opGrond = true; // Only set opGrond true for actual platforms
+        blok.opGrond = true;
         return { x: nextX, y: nextY };
       }
 
@@ -159,22 +167,18 @@ function checkPlatformCollisions(nextX, nextY) {
         nextX = platform.x + platform.width;
         handleWallCollision(false);
       }
+      if (nextX < 0) {
+        nextX = 0;
+        handleWallCollision(true); // Left wall bounce
+      }
+      if (nextX + blok.breedte > TARGET_WIDTH) {
+        nextX = TARGET_WIDTH - blok.breedte;
+        handleWallCollision(false); // Right wall bounce
+      }
     }
   }
 
   return { x: nextX, y: nextY };
-}
-function calculateTriangleY(x, triangle) {
-  // Calculate Y position on triangle surface based on X position
-  const slope = (triangle.y2 - triangle.y1) / (triangle.x2 - triangle.x1);
-  return triangle.y1 + slope * (x - triangle.x1);
-}
-
-function isPointInTriangle(p, p1, p2, p3) {
-  const area = 0.5 * (-p2.y * p3.x + p1.y * (-p2.x + p3.x) + p1.x * (p2.y - p3.y) + p2.x * p3.y);
-  const s = (1 / (2 * area)) * (p1.y * p3.x - p1.x * p3.y + (p3.y - p1.y) * p.x + (p1.x - p3.x) * p.y);
-  const t = (1 / (2 * area)) * (p1.x * p2.y - p1.y * p2.x + (p1.y - p2.y) * p.x + (p2.x - p1.x) * p.y);
-  return s > 0 && t > 0 && 1 - s - t > 0;
 }
 
 function updateJumpCharge() {
@@ -237,8 +241,29 @@ function spelLus() {
   requestAnimationFrame(spelLus);
 }
 function updateBlok() {
-  // First check if we're on a triangle before anything else
-  const isOnTriangle = checkTriangleCollision(blok.x, blok.y);
+  const currentLevel = levels[gameState.currentScreen];
+  const isOnTriangle =
+    currentLevel.triangles &&
+    currentLevel.triangles.some((triangle) => {
+      const playerBottom = {
+        x: blok.x + blok.breedte / 2,
+        y: blok.y + blok.hoogte,
+      };
+      const inXBounds =
+        triangle.direction === "right"
+          ? blok.x + blok.breedte >= triangle.x1 && blok.x <= triangle.x2
+          : blok.x + blok.breedte >= triangle.x2 && blok.x <= triangle.x1;
+
+      if (!inXBounds) return false;
+
+      const slope =
+        triangle.direction === "right"
+          ? (triangle.y2 - triangle.y1) / (triangle.x2 - triangle.x1)
+          : (triangle.y1 - triangle.y2) / (triangle.x1 - triangle.x2);
+
+      const expectedY = triangle.y1 + slope * (playerBottom.x - triangle.x1);
+      return Math.abs(playerBottom.y - expectedY) < 4;
+    });
 
   if (gameState.adminMode) {
     const flySpeed = 5;
@@ -258,9 +283,6 @@ function updateBlok() {
         gameState.currentScreen--;
       }
     }
-    blok.snelheidX = 0;
-    blok.snelheidY = 0;
-    blok.opGrond = true;
     return;
   }
 
@@ -271,11 +293,50 @@ function updateBlok() {
     blok.isChargingJump = false;
     blok.isWalking = false;
 
-    const currentLevel = levels[gameState.currentScreen];
-    const triangle = currentLevel.triangles[0];
-    const slope = (triangle.y2 - triangle.y1) / (triangle.x2 - triangle.x1);
-    blok.snelheidX += slope * 0.1;
-    blok.snelheidX = Math.max(-3, Math.min(blok.snelheidX, 3));
+    // Get the current triangle
+    const triangle = currentLevel.triangles.find((t) => {
+      const playerBottom = {
+        x: blok.x + blok.breedte / 2,
+        y: blok.y + blok.hoogte,
+      };
+      return playerBottom.x >= t.x1 && playerBottom.x <= t.x2;
+    });
+
+    if (triangle) {
+      const slope = (triangle.y2 - triangle.y1) / (triangle.x2 - triangle.x1);
+      const directionMultiplier = triangle.direction === "right" ? 1 : -1;
+      blok.snelheidX += 0.1 * directionMultiplier;
+      blok.snelheidX = Math.max(-3, Math.min(blok.snelheidX, 3));
+      blok.snelheidY = Math.abs(slope * blok.snelheidX);
+    }
+  }
+
+  // Platform edge detection
+  if (blok.opGrond) {
+    let isOnPlatform = false;
+    for (const platform of currentLevel.platforms) {
+      if (
+        blok.x + blok.breedte > platform.x &&
+        blok.x < platform.x + platform.width &&
+        Math.abs(blok.y + blok.hoogte - platform.y) < 2
+      ) {
+        isOnPlatform = true;
+        break;
+      }
+    }
+
+    const isOnGround =
+      gameState.currentScreen === 0 && Math.abs(blok.y + blok.hoogte - (TARGET_HEIGHT - GROUND_HEIGHT)) < 2;
+
+    if (!isOnPlatform && !isOnGround && !isOnTriangle) {
+      blok.opGrond = false;
+      blok.snelheidY = 0.1;
+      if (keyboard.ArrowLeft) {
+        blok.snelheidX = -1.33;
+      } else if (keyboard.ArrowRight) {
+        blok.snelheidX = 1.33;
+      }
+    }
   }
 
   updateJumpCharge();
@@ -284,8 +345,10 @@ function updateBlok() {
     if (blok.snelheidY > 0) {
       blok.fallDistance += blok.snelheidY;
     }
+    blok.snelheidY += blok.zwaartekracht;
   } else {
-    if (blok.fallDistance > blok.fallThreshold) {
+    // Only stun if landing on a platform, not on triangles
+    if (blok.fallDistance > blok.fallThreshold && !isOnTriangle) {
       blok.isStunned = true;
       blok.stunTimer = Date.now();
     }
@@ -314,39 +377,6 @@ function updateBlok() {
       blok.jumpDirection = 1;
     }
     blok.x = nextPosition;
-  }
-
-  if (blok.opGrond) {
-    let isOnPlatform = false;
-    const currentLevel = levels[gameState.currentScreen];
-
-    for (const platform of currentLevel.platforms) {
-      if (
-        blok.x + blok.breedte > platform.x &&
-        blok.x < platform.x + platform.width &&
-        Math.abs(blok.y + blok.hoogte - platform.y) < 2
-      ) {
-        isOnPlatform = true;
-        break;
-      }
-    }
-
-    const isOnGround =
-      gameState.currentScreen === 0 && Math.abs(blok.y + blok.hoogte - (TARGET_HEIGHT - GROUND_HEIGHT)) < 2;
-
-    if (!isOnPlatform && !isOnGround && !isOnTriangle) {
-      blok.opGrond = false;
-      blok.snelheidY = 0.1;
-      if (keyboard.ArrowLeft) {
-        blok.snelheidX = -1.33;
-      } else if (keyboard.ArrowRight) {
-        blok.snelheidX = 1.33;
-      }
-    }
-  }
-
-  if (!blok.opGrond) {
-    blok.snelheidY += blok.zwaartekracht;
   }
 
   let nextX = blok.x + blok.snelheidX;
@@ -387,50 +417,6 @@ function updateBlok() {
 
   blok.x = nextX;
   blok.y = nextY;
-}
-
-function checkTriangleCollision(playerX, playerY) {
-  const currentLevel = levels[gameState.currentScreen];
-  if (!currentLevel.triangles) return false;
-
-  const bottomLeft = {
-    x: playerX,
-    y: playerY + blok.hoogte,
-  };
-
-  const bottomRight = {
-    x: playerX + blok.breedte,
-    y: playerY + blok.hoogte,
-  };
-
-  for (const triangle of currentLevel.triangles) {
-    // For left triangles, we need to use x2->x1 and y2->y1
-    const slope =
-      triangle.direction === "right"
-        ? (triangle.y2 - triangle.y1) / (triangle.x2 - triangle.x1)
-        : (triangle.y2 - triangle.y1) / (triangle.x2 - triangle.x1);
-
-    // Use different reference points for left triangles
-    const refX = triangle.direction === "right" ? triangle.x1 : triangle.x2;
-    const refY = triangle.direction === "right" ? triangle.y1 : triangle.y2;
-
-    const expectedLeftY = refY + slope * (bottomLeft.x - refX);
-    const expectedRightY = refY + slope * (bottomRight.x - refX);
-
-    const inXBounds =
-      triangle.direction === "right"
-        ? bottomLeft.x >= triangle.x1 && bottomRight.x <= triangle.x2
-        : bottomLeft.x >= triangle.x1 && bottomRight.x <= triangle.x2;
-
-    const leftOnSurface = Math.abs(bottomLeft.y - expectedLeftY) < 10;
-    const rightOnSurface = Math.abs(bottomRight.y - expectedRightY) < 10;
-
-    if (inXBounds && (leftOnSurface || rightOnSurface)) {
-      blok.opGrond = true;
-      return true;
-    }
-  }
-  return false;
 }
 
 function drawScreen(screenIndex, offset) {
