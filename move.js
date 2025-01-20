@@ -35,10 +35,14 @@ const levels = [
   getLevelData().level9,
   getLevelData().level10,
   getLevelData().level11,
+  getLevelData().level12,
+  getLevelData().level13,
+  getLevelData().level14,
+  getLevelData().level15,
 ];
 
 const gameState = {
-  currentScreen: 10,
+  currentScreen: 14,
   adminMode: true,
   screenTransition: {
     active: false,
@@ -119,13 +123,12 @@ function checkPlatformCollisions(nextX, nextY) {
       // Increase collision threshold based on vertical speed
       const speedBasedThreshold = Math.max(3, Math.abs(blok.snelheidY) * 1.5);
 
-      // In checkPlatformCollisions function, update the triangle collision section:
       if (Math.abs(playerBottom.y - expectedY) < speedBasedThreshold) {
         nextY = expectedY - blok.hoogte;
         const directionMultiplier = triangle.direction === "right" ? 1 : -1;
         blok.snelheidX += 0.1 * directionMultiplier;
         blok.snelheidX = Math.max(-3, Math.min(blok.snelheidX, 3));
-        // Remove the line that sets snelheidY based on slope
+
         blok.snelheidY = 0; // Instead, just set vertical speed to 0
         blok.opGrond = true;
         return { x: nextX, y: nextY };
