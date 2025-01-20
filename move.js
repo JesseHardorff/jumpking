@@ -43,7 +43,7 @@ const levels = [
 
 const gameState = {
   currentScreen: 14,
-  adminMode: true,
+  adminMode: false,
   screenTransition: {
     active: false,
     offset: 0,
@@ -84,6 +84,56 @@ const blok = {
   isOnRamp: false,
   lastTriangleSpeedX: null,
   lastTriangleSpeedY: null,
+};
+const audioManager = {
+  cricket: new Audio("cricket.mp3"),
+  riool: new Audio("riool.mp3"),
+  episch: new Audio("episch.mp3"),
+  sunrise: new Audio("sunrise.mp3"),
+  wind: new Audio("wind.mp3"),
+  currentTrack: null,
+
+  getTrackForLevel(levelNum) {
+    if (levelNum === 15) {
+      return this.sunrise;
+    } else if (levelNum <= 6) {
+      return this.cricket;
+    } else if (levelNum <= 10) {
+      return this.riool;
+    } else {
+      return this.episch;
+    }
+  },
+
+  playTrackForLevel(levelNum) {
+    const newTrack = this.getTrackForLevel(levelNum);
+
+    if (this.currentTrack !== newTrack) {
+      if (this.currentTrack) {
+        this.currentTrack.pause();
+        this.currentTrack.currentTime = 0;
+      }
+
+      this.currentTrack = newTrack;
+
+      if (levelNum === 15) {
+        this.currentTrack.loop = false;
+        this.currentTrack.addEventListener(
+          "ended",
+          () => {
+            this.currentTrack = this.wind;
+            this.wind.loop = true;
+            this.wind.play();
+          },
+          { once: true }
+        );
+      } else {
+        this.currentTrack.loop = true;
+      }
+
+      this.currentTrack.play();
+    }
+  },
 };
 
 const keyboard = {
@@ -403,12 +453,15 @@ function updateBlok() {
     gameState.screenTransition.targetOffset = TARGET_HEIGHT;
     nextY = TARGET_HEIGHT + nextY;
     gameState.currentScreen++;
+    audioManager.playTrackForLevel(gameState.currentScreen + 1);
   }
+
   if (nextY > TARGET_HEIGHT && gameState.currentScreen > 0) {
     gameState.screenTransition.active = true;
     gameState.screenTransition.targetOffset = -TARGET_HEIGHT;
     nextY = nextY - TARGET_HEIGHT;
     gameState.currentScreen--;
+    audioManager.playTrackForLevel(gameState.currentScreen + 1);
   }
 
   if (gameState.currentScreen === 0 && nextY + blok.hoogte > TARGET_HEIGHT - GROUND_HEIGHT) {
@@ -483,3 +536,4 @@ window.addEventListener("keyup", (e) => {
 window.addEventListener("resize", resizeCanvas);
 
 requestAnimationFrame(spelLus);
+audioManager.playTrackForLevel(1);

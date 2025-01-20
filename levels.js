@@ -376,7 +376,7 @@ const LEVEL_DATA = {
 
       { x: MAX_LEFT + 370, y: MIN_HEIGHT - 230, width: 20, height: 90 },
 
-      { x: MAX_LEFT + 610, y: MIN_HEIGHT - 170, width: 60, height: 30 },
+      { x: MAX_LEFT + 700, y: MIN_HEIGHT - 130, width: 75, height: 30 },
 
       { x: MAX_LEFT + 640, y: MIN_HEIGHT - 430, width: 60, height: 30 },
       { x: MAX_RIGHT - 189, y: MIN_HEIGHT - 300, width: 50, height: 300 },
@@ -436,7 +436,8 @@ const LEVEL_DATA = {
       { x: MAX_RIGHT - 115, y: MAX_HEIGHT + 261, width: 20, height: 40 },
 
       { x: MAX_LEFT + 100, y: MIN_HEIGHT - 70, width: 30, height: 30 },
-      { x: MAX_LEFT + 100, y: MIN_HEIGHT - 350, width: 30, height: 30 },
+      { x: MAX_LEFT + 100, y: MIN_HEIGHT - 280, width: 30, height: 30 },
+      { x: MAX_LEFT + 100, y: MIN_HEIGHT - 380, width: 30, height: 30 },
 
       { x: MAX_RIGHT - 286, y: MAX_HEIGHT + 300, width: 70, height: 530 },
     ],
