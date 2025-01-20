@@ -86,12 +86,27 @@ const blok = {
   lastTriangleSpeedY: null,
 };
 const audioManager = {
-  cricket: new Audio("cricket.mp3"),
-  riool: new Audio("riool.mp3"),
-  episch: new Audio("episch.mp3"),
-  sunrise: new Audio("sunrise.mp3"),
-  wind: new Audio("wind.mp3"),
+  // Background music tracks
+  cricket: new Audio("sound/bg-music/cricket.mp3"),
+  riool: new Audio("sound/bg-music/riool.mp3"),
+  episch: new Audio("sound/bg-music/episch.mp3"),
+  sunrise: new Audio("sound/bg-music/sunrise.mp3"),
+  wind: new Audio("sound/bg-music/wind.mp3"),
   currentTrack: null,
+
+  // Sound effects
+  sfx: {
+    splat: new Audio("sound/movement/king_splat.wav"),
+    land: new Audio("sound/movement/king_land.wav"),
+    jump: new Audio("sound/movement/king_jump.wav"),
+    bump: new Audio("sound/movement/king_bump.wav"),
+  },
+
+  playSfx(soundName) {
+    const sound = this.sfx[soundName];
+    sound.currentTime = 0;
+    sound.play();
+  },
 
   getTrackForLevel(levelNum) {
     if (levelNum === 15) {
@@ -248,6 +263,7 @@ function updateJumpCharge() {
 
 function executeJump() {
   if (blok.springKracht > 0) {
+    audioManager.playSfx("jump");
     let jumpPower = blok.springKracht * 1.3;
     let chargeProgress = blok.jumpChargeTime / blok.maxChargeTime;
 
@@ -275,6 +291,7 @@ window.addEventListener("blur", () => {
 });
 
 function handleWallCollision(isLeftWall) {
+  audioManager.playSfx("bump");
   blok.snelheidX *= -blok.bounceStrength;
   blok.springKracht *= blok.bounceStrength;
   blok.snelheidY *= 0.98;
@@ -377,6 +394,11 @@ function updateBlok() {
         break;
       }
     }
+    // In updateBlok where ground landing happens:
+    if (blok.opGrond && blok.fallDistance > 0) {
+      audioManager.playSfx("land");
+      blok.fallDistance = 0;
+    }
 
     const isOnGround =
       gameState.currentScreen === 0 && Math.abs(blok.y + blok.hoogte - (TARGET_HEIGHT - GROUND_HEIGHT)) < 2;
@@ -402,6 +424,7 @@ function updateBlok() {
   } else {
     // Only stun if landing on a platform, not on triangles
     if (blok.fallDistance > blok.fallThreshold && !isOnTriangle) {
+      audioManager.playSfx("splat");
       blok.isStunned = true;
       blok.stunTimer = Date.now();
     }
