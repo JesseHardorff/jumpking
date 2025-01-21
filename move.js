@@ -1,3 +1,452 @@
+import { config } from "./config.js";
+
+const MIN_HEIGHT = 716;
+const FLOOR_HEIGHT = MIN_HEIGHT - 65;
+const MAX_RIGHT = 959;
+const MAX_LEFT = 0;
+const MAX_HEIGHT = 0;
+
+const LEVEL_DATA = {
+  level1: {
+    backgroundColor: "#456441",
+    ground: { y: FLOOR_HEIGHT, height: 65 },
+    platforms: [
+      { x: MAX_LEFT, y: FLOOR_HEIGHT - 285, width: 255, height: 285 },
+      { x: MAX_RIGHT - 255, y: FLOOR_HEIGHT - 285, width: 255, height: 285 },
+      { x: MAX_RIGHT - 592, y: FLOOR_HEIGHT - 575, width: 225, height: 100 },
+
+      { x: MAX_LEFT, y: 0, width: 15, height: MIN_HEIGHT - 285 },
+      { x: MAX_RIGHT - 15, y: 0, width: 15, height: MIN_HEIGHT - 285 },
+    ],
+  },
+  level2: {
+    ground: { y: MIN_HEIGHT + 100, height: 0 }, // Ground hidden below view
+    platforms: [
+      { x: 590, y: MIN_HEIGHT - 130, width: 195, height: 70 },
+      { x: 510, y: MIN_HEIGHT - 320, width: 150, height: 70 },
+      { x: 814, y: MIN_HEIGHT - 320, width: 130, height: 70 },
+      { x: 235, y: MIN_HEIGHT - 515, width: 150, height: 135 },
+      { x: 15, y: MIN_HEIGHT - 560, width: 145, height: 185 },
+
+      { x: MAX_LEFT, y: 0, width: 15, height: MIN_HEIGHT },
+      { x: MAX_RIGHT - 15, y: 0, width: 15, height: MIN_HEIGHT },
+    ],
+  },
+  level3: {
+    ground: { y: MIN_HEIGHT + 100, height: 0 }, // Ground hidden below view
+    platforms: [
+      { x: 415, y: MIN_HEIGHT - 112, width: 97, height: 33 },
+      { x: 640, y: MIN_HEIGHT - 112, width: 113, height: 33 },
+      { x: MAX_RIGHT - 112, y: MIN_HEIGHT - 207, width: 97, height: 33 },
+      { x: 360, y: MIN_HEIGHT - 273, width: 315, height: 65 },
+      { x: 577, y: MIN_HEIGHT - 305, width: 98, height: 80 },
+      { x: 318, y: MIN_HEIGHT - 478, width: 115, height: 90 },
+      { x: MAX_LEFT + 15, y: MIN_HEIGHT - 525, width: 112, height: 33 },
+      { x: MAX_LEFT + 273, y: MIN_HEIGHT - 716, width: 142, height: 33 },
+
+      { x: MAX_LEFT, y: 0, width: 15, height: MIN_HEIGHT },
+      { x: MAX_RIGHT - 15, y: 0, width: 15, height: MIN_HEIGHT },
+    ],
+  },
+  level4: {
+    ground: { y: MIN_HEIGHT + 100, height: 0 }, // Ground hidden below view
+    platforms: [
+      { x: 270, y: MIN_HEIGHT - 77, width: 144, height: 113 },
+      { x: 270, y: MIN_HEIGHT - 285, width: 140, height: 30 },
+      { x: 15, y: MIN_HEIGHT - 285, width: 110, height: 30 },
+      { x: 592, y: MIN_HEIGHT - 395, width: 94, height: 140 },
+      { x: 270, y: MIN_HEIGHT - 542, width: 76, height: 157 },
+      { x: 270, y: MAX_HEIGHT, width: 31, height: 175 },
+      { x: 654, y: MIN_HEIGHT - 573, width: 32, height: 179 },
+      { x: 654, y: MIN_HEIGHT - 573, width: 142, height: 32 },
+      { x: 654, y: MAX_HEIGHT, width: 32, height: 31 },
+      { x: MAX_RIGHT - 95, y: MIN_HEIGHT - 450, width: 80, height: 32 },
+
+      { x: MAX_LEFT, y: 0, width: 15, height: MIN_HEIGHT },
+      { x: MAX_RIGHT - 15, y: 0, width: 15, height: MIN_HEIGHT },
+    ],
+  },
+  level5: {
+    ground: { y: MIN_HEIGHT + 100, height: 0 }, // Ground hidden below view
+    platforms: [
+      { x: 654, y: MIN_HEIGHT - 94, width: 32, height: 94 },
+      { x: 654, y: MIN_HEIGHT - 94, width: 78, height: 32 },
+
+      { x: 654, y: MIN_HEIGHT - 240, width: 78, height: 32 },
+      { x: 270, y: MIN_HEIGHT - 94, width: 31, height: 94 },
+
+      { x: 223, y: MIN_HEIGHT - 94, width: 78, height: 32 },
+      { x: MAX_LEFT + 15, y: MIN_HEIGHT - 240, width: 68, height: 32 },
+      { x: MAX_RIGHT - 74, y: MIN_HEIGHT - 400, width: 60, height: 50 },
+
+      { x: 577, y: MIN_HEIGHT - 540, width: 60, height: 31 },
+      { x: 450, y: MIN_HEIGHT - 575, width: 60, height: 31 },
+      { x: 323, y: MIN_HEIGHT - 605, width: 60, height: 31 },
+
+      { x: 80, y: MIN_HEIGHT - 540, width: 60, height: 31 },
+
+      { x: 304, y: MAX_HEIGHT, width: 350, height: 31 },
+
+      { x: MAX_LEFT, y: 0, width: 15, height: MIN_HEIGHT },
+      { x: MAX_RIGHT - 15, y: 0, width: 15, height: MIN_HEIGHT },
+    ],
+  },
+  level6: {
+    ground: { y: MIN_HEIGHT + 100, height: 0 }, // Ground hidden below view
+    platforms: [
+      { x: 304, y: MIN_HEIGHT - 62, width: 350, height: 62 },
+
+      { x: MAX_RIGHT - 380, y: MIN_HEIGHT - 558, width: 366, height: 350 },
+      { x: MAX_RIGHT - 305, y: MAX_HEIGHT, width: 195, height: 77 },
+      { x: MAX_RIGHT - 380, y: MAX_HEIGHT, width: 195, height: 47 },
+
+      { x: MAX_RIGHT - 700, y: MIN_HEIGHT - 238, width: 90, height: 30 },
+      { x: MAX_LEFT, y: MIN_HEIGHT - 350, width: 110, height: 30 },
+      { x: MAX_LEFT + 15, y: MAX_HEIGHT, width: 368, height: 30 },
+      { x: 273, y: MAX_HEIGHT, width: 110, height: 110 },
+
+      { x: MAX_RIGHT - 800, y: MIN_HEIGHT - 492, width: 225, height: 32 },
+      { x: MAX_RIGHT - 800, y: MIN_HEIGHT - 573, width: 30, height: 82 },
+      { x: MAX_RIGHT - 845, y: MIN_HEIGHT - 573, width: 50, height: 30 },
+
+      { x: MAX_LEFT, y: 0, width: 15, height: MIN_HEIGHT },
+      { x: MAX_RIGHT - 15, y: 0, width: 15, height: MIN_HEIGHT },
+    ],
+  },
+  level7: {
+    ground: { y: MIN_HEIGHT + 100, height: 0 },
+    platforms: [
+      { x: MAX_RIGHT - 220, y: MIN_HEIGHT - 30, width: 110, height: 30 },
+      { x: MAX_RIGHT - 220, y: MIN_HEIGHT - 301, width: 110, height: 30 },
+      { x: MAX_RIGHT - 380, y: MIN_HEIGHT - 301, width: 161, height: 301 },
+
+      { x: MAX_RIGHT - 190, y: MIN_HEIGHT - 495, width: 175, height: 47 },
+      { x: MAX_RIGHT - 190, y: MAX_HEIGHT, width: 175, height: 222 },
+      { x: MAX_RIGHT - 380, y: MIN_HEIGHT - 495, width: 191, height: 96 },
+
+      { x: MAX_LEFT + 305, y: MAX_HEIGHT + 315, width: 77, height: 70 },
+      { x: MAX_LEFT + 305, y: MAX_HEIGHT, width: 155, height: 316 },
+      { x: MAX_LEFT + 459, y: MAX_HEIGHT, width: 130, height: 35 },
+
+      { x: MAX_LEFT + 253, y: MAX_HEIGHT + 110, width: 53, height: 85 },
+
+      { x: MAX_LEFT + 15, y: MAX_HEIGHT, width: 160, height: 33 },
+      { x: MAX_LEFT + 15, y: MAX_HEIGHT + 477, width: 190, height: 239 },
+      { x: MAX_LEFT + 15, y: MAX_HEIGHT + 335, width: 50, height: 150 },
+
+      { x: MAX_LEFT + 375, y: MAX_HEIGHT + 480, width: 40, height: 32 },
+      { x: MAX_RIGHT - 685, y: MIN_HEIGHT - 237, width: 140, height: 3 },
+
+      { x: MAX_LEFT, y: 0, width: 15, height: MIN_HEIGHT },
+      { x: MAX_RIGHT - 15, y: 0, width: 15, height: MIN_HEIGHT },
+    ],
+    triangles: [
+      {
+        x1: 770,
+        y1: MIN_HEIGHT - 655, // Start point
+        x2: MAX_RIGHT - 380,
+        y2: MIN_HEIGHT - 494, // End point
+        x3: 770,
+        y3: MIN_HEIGHT - 494, // Bottom point
+        direction: "left",
+      },
+      {
+        x1: 380,
+        y1: MIN_HEIGHT - 130, // Start point
+        x2: MAX_RIGHT - 685,
+        y2: MIN_HEIGHT - 236, // End point
+        x3: 380,
+        y3: MIN_HEIGHT - 236, // Bottom point
+        direction: "right",
+      },
+      {
+        x1: 204,
+        y1: MIN_HEIGHT - 185, // Start point
+        x2: MAX_RIGHT - 580,
+        y2: MIN_HEIGHT, // End point
+        x3: 204,
+        y3: MIN_HEIGHT, // Bottom point
+        direction: "right",
+      },
+      {
+        x1: 65,
+        y1: MIN_HEIGHT - 360, // Start point
+        x2: MAX_RIGHT - 753,
+        y2: MIN_HEIGHT - 238, // End point
+        x3: 65,
+        y3: MIN_HEIGHT - 238, // Bottom point
+        direction: "right",
+      },
+    ],
+  },
+
+  level8: {
+    ground: { y: MIN_HEIGHT + 100, height: 0 }, // Ground hidden below view
+    platforms: [
+      { x: MAX_RIGHT - 92, y: MIN_HEIGHT - 270, width: 77, height: 270 },
+      { x: MAX_RIGHT - 190, y: MIN_HEIGHT - 77, width: 100, height: 77 },
+
+      { x: MAX_RIGHT - 655, y: MIN_HEIGHT - 238, width: 190, height: 238 },
+      { x: MAX_RIGHT - 555, y: MIN_HEIGHT - 82, width: 185, height: 82 },
+
+      { x: MAX_RIGHT - 92, y: MAX_HEIGHT, width: 77, height: 174 },
+
+      { x: MAX_LEFT + 15, y: MAX_HEIGHT + 128, width: 50, height: 174 },
+      { x: MAX_LEFT + 15, y: MAX_HEIGHT + 285, width: 480, height: 80 },
+      { x: MAX_LEFT + 15, y: MAX_HEIGHT + 364, width: 130, height: 145 },
+      { x: MAX_LEFT + 15, y: MAX_HEIGHT + 508, width: 30, height: 179 },
+
+      { x: MAX_LEFT + 175, y: MAX_HEIGHT, width: 240, height: 134 },
+      { x: MAX_LEFT + 175, y: MAX_HEIGHT + 100, width: 320, height: 84 },
+
+      { x: MAX_LEFT + 15, y: MAX_HEIGHT + 686, width: 160, height: 30 },
+
+      { x: MAX_LEFT, y: 0, width: 15, height: MIN_HEIGHT },
+      { x: MAX_RIGHT - 15, y: 0, width: 15, height: MIN_HEIGHT },
+    ],
+    triangles: [
+      {
+        x1: 867,
+        y1: MIN_HEIGHT - 175, // Start point
+        x2: 768,
+        y2: MIN_HEIGHT - 77, // End point
+        x3: 867,
+        y3: MIN_HEIGHT - 77, // Bottom point
+        direction: "left",
+      },
+      {
+        x1: 494,
+        y1: MIN_HEIGHT - 175, // Start point
+        x2: 590,
+        y2: MIN_HEIGHT - 82, // End point
+        x3: 494,
+        y3: MIN_HEIGHT - 82, // Bottom point
+        direction: "right",
+      },
+      {
+        x1: 415,
+        y1: MAX_HEIGHT + 50, // Start point
+        x2: 495,
+        y2: MAX_HEIGHT + 100, // End point
+        x3: 415,
+        y3: MAX_HEIGHT + 100, // Bottom point
+        direction: "right",
+      },
+    ],
+  },
+
+  level9: {
+    ground: { y: MIN_HEIGHT + 100, height: 0 }, // Ground hidden below view
+    platforms: [
+      { x: MAX_LEFT + 15, y: MAX_HEIGHT, width: 190, height: 35 },
+
+      { x: MAX_LEFT + 305, y: MAX_HEIGHT, width: 140, height: 35 },
+      { x: MAX_LEFT + 415, y: MAX_HEIGHT, width: 30, height: 318 },
+      { x: MAX_LEFT + 415, y: MAX_HEIGHT + 192, width: 95, height: 126 },
+      { x: MAX_LEFT + 350, y: MAX_HEIGHT + 268, width: 80, height: 50 },
+
+      { x: MAX_LEFT + 785, y: MAX_HEIGHT, width: 160, height: 30 },
+
+      { x: MAX_LEFT + 785, y: MAX_HEIGHT + 192, width: 60, height: 60 },
+
+      { x: MAX_LEFT + 785, y: MAX_HEIGHT + 414, width: 62, height: 130 },
+
+      { x: MAX_LEFT + 594, y: MAX_HEIGHT + 414, width: 62, height: 130 },
+
+      { x: MAX_LEFT + 403, y: MAX_HEIGHT + 414, width: 62, height: 130 },
+
+      { x: MAX_LEFT + 175, y: MAX_HEIGHT + 175, width: 33, height: 250 },
+      { x: MAX_LEFT + 175, y: MAX_HEIGHT + 414, width: 94, height: 302 },
+
+      { x: MAX_LEFT + 15, y: MAX_HEIGHT + 335, width: 50, height: 46 },
+
+      { x: MAX_LEFT + 126, y: MAX_HEIGHT + 590, width: 50, height: 46 },
+
+      { x: MAX_LEFT, y: 0, width: 15, height: MIN_HEIGHT },
+      { x: MAX_RIGHT - 15, y: 0, width: 15, height: MIN_HEIGHT },
+    ],
+    triangles: [
+      {
+        x1: 268,
+        y1: MIN_HEIGHT - 175, // Start point
+        x2: 445,
+        y2: MIN_HEIGHT, // End point
+        x3: 268,
+        y3: MIN_HEIGHT, // Bottom point
+        direction: "right",
+      },
+      {
+        x1: MAX_RIGHT - 15,
+        y1: MIN_HEIGHT - 85, // Start point
+        x2: MAX_RIGHT - 100,
+        y2: MIN_HEIGHT, // End point
+        x3: MAX_RIGHT - 15,
+        y3: MIN_HEIGHT, // Bottom point
+        direction: "left",
+      },
+    ],
+  },
+  level10: {
+    ground: { y: MIN_HEIGHT + 100, height: 0 },
+    platforms: [
+      { x: MAX_RIGHT - 175, y: MIN_HEIGHT - 65, width: 200, height: 130 },
+
+      { x: MAX_RIGHT - 650, y: MIN_HEIGHT - 165, width: 135, height: 170 },
+
+      { x: MAX_LEFT, y: MIN_HEIGHT - 230, width: 110, height: 230 },
+
+      { x: MAX_LEFT + 15, y: MIN_HEIGHT - 70, width: 190, height: 70 },
+
+      { x: MAX_RIGHT - 800, y: MIN_HEIGHT - 390, width: 175, height: 60 },
+
+      { x: MAX_LEFT, y: MAX_HEIGHT, width: 334, height: 226 },
+
+      { x: MAX_LEFT + 594, y: MAX_HEIGHT + 214, width: 50, height: 130 },
+
+      { x: MAX_RIGHT - 189, y: MIN_HEIGHT - 690, width: 175, height: 340 },
+
+      { x: MAX_RIGHT - 334, y: MAX_HEIGHT, width: 60, height: 60 },
+      { x: MAX_RIGHT - 189, y: MAX_HEIGHT, width: 200, height: 60 },
+
+      { x: MAX_RIGHT - 800, y: MIN_HEIGHT - 630, width: 225, height: 60 },
+
+      { x: MAX_LEFT, y: 0, width: 15, height: MIN_HEIGHT },
+      { x: MAX_RIGHT - 15, y: 0, width: 15, height: MIN_HEIGHT },
+    ],
+    triangles: [
+      {
+        x1: 110,
+        y1: MIN_HEIGHT - 125, // Start point
+        x2: 206,
+        y2: MIN_HEIGHT - 70, // End   point
+        x3: 110,
+        y3: MIN_HEIGHT - 70, // Bottom point
+        direction: "right",
+      },
+    ],
+  },
+  level11: {
+    ground: { y: MIN_HEIGHT + 100, height: 0 },
+    platforms: [
+      { x: MAX_LEFT, y: MIN_HEIGHT - 60, width: 334, height: 60 },
+      { x: MAX_RIGHT - 189, y: MIN_HEIGHT - 60, width: 200, height: 60 },
+      { x: MAX_RIGHT - 334, y: MIN_HEIGHT - 60, width: 60, height: 60 },
+
+      { x: MAX_LEFT + 284, y: MIN_HEIGHT - 480, width: 50, height: 300 },
+      { x: MAX_LEFT + 333, y: MIN_HEIGHT - 300, width: 50, height: 50 },
+
+      { x: MAX_LEFT + 633, y: MIN_HEIGHT - 500, width: 40, height: 50 },
+      { x: MAX_LEFT + 563, y: MIN_HEIGHT - 660, width: 50, height: 20 }, // { x: MAX_LEFT + 503, y: MIN_HEIGHT - 640, width: 50, height: 20 },
+      { x: MAX_LEFT + 225, y: MAX_HEIGHT, width: 60, height: 86 },
+
+      { x: MAX_RIGHT - 189, y: MIN_HEIGHT - 580, width: 50, height: 300 },
+
+      { x: MAX_RIGHT - 189, y: MIN_HEIGHT - 880, width: 50, height: 200 },
+      { x: MAX_RIGHT - 210, y: MIN_HEIGHT - 580, width: 50, height: 20 },
+    ],
+    triangles: [
+      {
+        x1: 0,
+        y1: MIN_HEIGHT - 175, // Start point
+        x2: 335,
+        y2: MIN_HEIGHT - 60, // End   point
+        x3: 0,
+        y3: MIN_HEIGHT - 60, // Bottom point
+        direction: "right",
+      },
+      {
+        x1: MAX_RIGHT,
+        y1: MIN_HEIGHT - 175, // Start point
+        x2: 770,
+        y2: MIN_HEIGHT - 60, // End   point
+        x3: MAX_RIGHT,
+        y3: MIN_HEIGHT - 60, // Bottom point
+        direction: "left",
+      },
+    ],
+  },
+  level12: {
+    ground: { y: MIN_HEIGHT + 100, height: 0 },
+    platforms: [
+      { x: MAX_LEFT + 224, y: MIN_HEIGHT - 120, width: 60, height: 300 },
+      { x: MAX_LEFT + 224, y: MIN_HEIGHT - 520, width: 30, height: 90 },
+      { x: MAX_LEFT + 224, y: MIN_HEIGHT - 520, width: 90, height: 30 },
+      { x: MAX_LEFT + 224, y: MAX_HEIGHT, width: 60, height: 60 },
+
+      { x: MAX_LEFT + 370, y: MIN_HEIGHT - 230, width: 20, height: 90 },
+
+      { x: MAX_LEFT + 700, y: MIN_HEIGHT - 130, width: 75, height: 30 },
+
+      { x: MAX_LEFT + 640, y: MIN_HEIGHT - 430, width: 60, height: 30 },
+      { x: MAX_RIGHT - 189, y: MIN_HEIGHT - 300, width: 50, height: 300 },
+      { x: MAX_RIGHT - 286, y: MAX_HEIGHT, width: 70, height: 300 },
+      { x: MAX_RIGHT - 300, y: MAX_HEIGHT, width: 140, height: 30 },
+      { x: MAX_RIGHT - 286, y: MAX_HEIGHT + 299, width: 147, height: 150 },
+    ],
+    triangles: [],
+  },
+  level13: {
+    ground: { y: MIN_HEIGHT + 100, height: 0 },
+    platforms: [
+      { x: MAX_LEFT + 224, y: MIN_HEIGHT - 460, width: 60, height: 500 },
+      { x: MAX_LEFT + 204, y: MIN_HEIGHT - 460, width: 60, height: 30 },
+      { x: MAX_LEFT + 178, y: MAX_HEIGHT, width: 94, height: 30 },
+      { x: MAX_LEFT + 224, y: MAX_HEIGHT, width: 50, height: 110 },
+      { x: MAX_LEFT + 180, y: MAX_HEIGHT, width: 90, height: 30 },
+
+      { x: MAX_RIGHT - 460, y: MAX_HEIGHT + 240, width: 60, height: 30 },
+
+      { x: MAX_RIGHT - 530, y: MAX_HEIGHT + 500, width: 60, height: 30 },
+
+      { x: MAX_RIGHT - 286, y: MAX_HEIGHT, width: 70, height: 190 },
+      { x: MAX_RIGHT - 251, y: MAX_HEIGHT + 189, width: 35, height: 150 },
+      { x: MAX_RIGHT - 286, y: MAX_HEIGHT + 338, width: 70, height: 80 },
+      { x: MAX_RIGHT - 305, y: MAX_HEIGHT + 338, width: 85, height: 30 },
+      { x: MAX_RIGHT - 300, y: MIN_HEIGHT - 30, width: 140, height: 30 },
+    ],
+    triangles: [],
+  },
+  level14: {
+    ground: { y: MIN_HEIGHT + 100, height: 0 },
+    platforms: [
+      { x: MAX_LEFT + 224, y: MAX_HEIGHT, width: 60, height: 80 },
+      { x: MAX_LEFT + 180, y: MIN_HEIGHT - 30, width: 90, height: 30 },
+      { x: MAX_LEFT + 224, y: MAX_HEIGHT, width: 110, height: 30 },
+
+      { x: MAX_RIGHT - 495, y: MAX_HEIGHT + 590, width: 60, height: 30 },
+
+      { x: MAX_RIGHT - 495, y: MAX_HEIGHT + 350, width: 20, height: 80 },
+
+      { x: MAX_LEFT + 325, y: MAX_HEIGHT + 320, width: 60, height: 30 },
+
+      { x: MAX_RIGHT - 286, y: MAX_HEIGHT, width: 70, height: 30 },
+      { x: MAX_RIGHT - 286, y: MAX_HEIGHT + 190, width: 70, height: 140 },
+      { x: MAX_RIGHT - 286, y: MAX_HEIGHT + 480, width: 70, height: 240 },
+    ],
+    triangles: [],
+  },
+  level15: {
+    ground: { y: MIN_HEIGHT + 100, height: 0 },
+    platforms: [
+      { x: MAX_LEFT + 224, y: MIN_HEIGHT - 30, width: 110, height: 30 },
+      { x: MAX_LEFT + 224, y: MAX_HEIGHT + 300, width: 450, height: 220 },
+
+      { x: MAX_LEFT + 224, y: MAX_HEIGHT + 300, width: 640, height: 20 },
+      { x: MAX_RIGHT - 115, y: MAX_HEIGHT + 261, width: 20, height: 40 },
+
+      { x: MAX_LEFT + 100, y: MIN_HEIGHT - 70, width: 30, height: 30 },
+      { x: MAX_LEFT + 100, y: MIN_HEIGHT - 280, width: 30, height: 30 },
+      { x: MAX_LEFT + 100, y: MIN_HEIGHT - 380, width: 30, height: 30 },
+
+      { x: MAX_RIGHT - 286, y: MAX_HEIGHT + 300, width: 70, height: 530 },
+    ],
+    triangles: [],
+  },
+};
+export function getLevelData() {
+  return LEVEL_DATA;
+}
+
 const TARGET_WIDTH = 959;
 const TARGET_HEIGHT = 716;
 const canvas = document.getElementById("gameCanvas");
@@ -22,7 +471,6 @@ resizeCanvas();
 const GROUND_HEIGHT = 65;
 const GROUND_COLOR = "#4a4a4a";
 
-import { getLevelData } from "./levels.js";
 const levels = [
   getLevelData().level1,
   getLevelData().level2,
@@ -42,7 +490,7 @@ const levels = [
 ];
 
 const gameState = {
-  currentScreen: 14,
+  currentScreen: 0,
   adminMode: false,
   screenTransition: {
     active: false,
@@ -50,6 +498,108 @@ const gameState = {
     targetOffset: 0,
   },
 };
+const spriteSheet = {
+  image: new Image(),
+  frameWidth: 32,
+  frameHeight: 32,
+  facingRight: true,
+  animations: {
+    idle: {
+      x: 230,
+      y: 18,
+      frames: 1,
+    },
+    charging: {
+      x: 232,
+      y: 66,
+      frames: 1,
+    },
+    walking: {
+      frames: [
+        { x: 274, y: 18 }, // First walking frame
+        { x: 323, y: 18 }, // Second walking frame
+        { x: 370, y: 18 }, // Third walking frame
+        { x: 323, y: 18 }, // Second walking frame
+      ],
+
+      frameDurations: [400, 200, 400, 200], // Duration for each frame in ms
+      currentFrame: 0,
+      frameTimer: 0,
+      reverse: false,
+    },
+    jumpUp: {
+      x: 278,
+      y: 58,
+      frames: 1,
+    },
+    jumpDown: {
+      x: 330,
+      y: 58,
+      frames: 1,
+    },
+    knocked: {
+      x: 376,
+      y: 66,
+      frames: 1,
+    },
+    bump: {
+      x: 232,
+      y: 114,
+      frames: 1,
+    },
+  },
+  currentAnimation: "idle",
+};
+spriteSheet.image.src = "spritesheet.png";
+function drawCharacter() {
+  const animation = spriteSheet.animations[spriteSheet.currentAnimation];
+
+  ctx.imageSmoothingEnabled = false;
+  ctx.mozImageSmoothingEnabled = false;
+  ctx.webkitImageSmoothingEnabled = false;
+  ctx.msImageSmoothingEnabled = false;
+
+  const frameWidth = spriteSheet.currentAnimation === "walking" ? 40 : spriteSheet.frameWidth;
+  const displayWidth = spriteSheet.currentAnimation === "walking" ? 75 : 60; // Add height adjustment for jumping animations
+
+  const frameHeight =
+    spriteSheet.currentAnimation === "jumpUp" || spriteSheet.currentAnimation === "jumpDown"
+      ? 48
+      : spriteSheet.frameHeight;
+  const displayHeight =
+    spriteSheet.currentAnimation === "jumpUp" || spriteSheet.currentAnimation === "jumpDown" ? 90 : 60;
+
+  const xOffset = (blok.breedte - displayWidth) / 2;
+  const yOffset = (blok.hoogte - displayHeight) / 2;
+
+  ctx.save();
+  if (!spriteSheet.facingRight) {
+    ctx.scale(-1, 1);
+    ctx.translate(-2 * (blok.x + xOffset) - displayWidth, 0);
+  }
+
+  let sourceX, sourceY;
+  if (animation.frames && Array.isArray(animation.frames)) {
+    sourceX = animation.frames[animation.currentFrame].x;
+    sourceY = animation.frames[animation.currentFrame].y;
+  } else {
+    sourceX = animation.x;
+    sourceY = animation.y;
+  }
+
+  ctx.drawImage(
+    spriteSheet.image,
+    sourceX,
+    sourceY,
+    frameWidth,
+    frameHeight,
+    blok.x + xOffset,
+    blok.y + yOffset,
+    displayWidth,
+    displayHeight
+  );
+  ctx.restore();
+}
 
 const blok = {
   x: TARGET_WIDTH / 2 - 25,
@@ -66,8 +616,7 @@ const blok = {
   stunDuration: 800,
   snelheidX: 0,
   snelheidY: 0,
-  zwaartekracht: 0.1,
-  //zwaartekracht: -0.0001,
+  zwaartekracht: 0.1, //zwaartekracht: -0.0001,
   springKracht: 0,
   minJumpForce: 0.7,
   maxJumpForce: 6.17,
@@ -84,33 +633,46 @@ const blok = {
   isOnRamp: false,
   lastTriangleSpeedX: null,
   lastTriangleSpeedY: null,
+  hasCollided: false,
 };
 const audioManager = {
   // Background music tracks
-  cricket: new Audio("sound/bg-music/cricket.mp3"),
-  riool: new Audio("sound/bg-music/riool.mp3"),
+  cricket: new Audio("sound/bg-music/cricket.wav"),
+  riool: new Audio("sound/bg-music/riool.wav"),
   episch: new Audio("sound/bg-music/episch.mp3"),
   sunrise: new Audio("sound/bg-music/sunrise.mp3"),
-  wind: new Audio("sound/bg-music/wind.mp3"),
-  currentTrack: null,
+  wind: new Audio("sound/bg-music/wind.wav"),
+  currentTrack: null, // Sound effects
 
-  // Sound effects
   sfx: {
     splat: new Audio("sound/movement/king_splat.wav"),
     land: new Audio("sound/movement/king_land.wav"),
     jump: new Audio("sound/movement/king_jump.wav"),
     bump: new Audio("sound/movement/king_bump.wav"),
   },
-
+  lastBumpTime: 0,
+  bumpCooldown: 150,
   playSfx(soundName) {
-    const sound = this.sfx[soundName];
-    sound.currentTime = 0;
-    sound.play();
+    const sound = this.sfx[soundName]; // Add special handling for bump sound
+    if (soundName === "bump") {
+      const now = Date.now();
+      if (now - this.lastBumpTime < this.bumpCooldown) {
+        return;
+      }
+      this.lastBumpTime = now;
+    }
+    const clone = sound.cloneNode();
+    clone.volume = sound.volume;
+    clone.play();
   },
 
   getTrackForLevel(levelNum) {
     if (levelNum === 15) {
-      return this.sunrise;
+      return this.wind;
+    } else if (levelNum === 6) {
+      this.cricket.volume = 0.7;
+      this.riool.volume = 0.3;
+      return [this.cricket, this.riool];
     } else if (levelNum <= 6) {
       return this.cricket;
     } else if (levelNum <= 10) {
@@ -123,30 +685,58 @@ const audioManager = {
   playTrackForLevel(levelNum) {
     const newTrack = this.getTrackForLevel(levelNum);
 
-    if (this.currentTrack !== newTrack) {
+    if (Array.isArray(newTrack)) {
+      // Handle multiple tracks for level 6
       if (this.currentTrack) {
-        this.currentTrack.pause();
-        this.currentTrack.currentTime = 0;
+        if (Array.isArray(this.currentTrack)) {
+          this.currentTrack.forEach((track) => {
+            track.pause();
+            track.currentTime = 0;
+          });
+        } else {
+          this.currentTrack.pause();
+          this.currentTrack.currentTime = 0;
+        }
       }
-
       this.currentTrack = newTrack;
+      newTrack.forEach((track) => {
+        track.loop = true;
+        track.play();
+      });
+    } else {
+      // Normal single track handling
+      if (this.currentTrack !== newTrack) {
+        if (this.currentTrack) {
+          if (Array.isArray(this.currentTrack)) {
+            this.currentTrack.forEach((track) => {
+              track.pause();
+              track.currentTime = 0;
+            });
+          } else {
+            this.currentTrack.pause();
+            this.currentTrack.currentTime = 0;
+          }
+        }
 
-      if (levelNum === 15) {
-        this.currentTrack.loop = false;
-        this.currentTrack.addEventListener(
-          "ended",
-          () => {
-            this.currentTrack = this.wind;
-            this.wind.loop = true;
-            this.wind.play();
-          },
-          { once: true }
-        );
-      } else {
-        this.currentTrack.loop = true;
+        this.currentTrack = newTrack;
+
+        if (levelNum === 15) {
+          this.currentTrack.loop = false;
+          this.currentTrack.addEventListener(
+            "ended",
+            () => {
+              this.currentTrack = this.wind;
+              this.wind.loop = true;
+              this.wind.play();
+            },
+            { once: true }
+          );
+        } else {
+          this.currentTrack.loop = true;
+        }
+
+        this.currentTrack.play();
       }
-
-      this.currentTrack.play();
     }
   },
 };
@@ -160,9 +750,8 @@ const keyboard = {
   KeyP: false,
 };
 function checkPlatformCollisions(nextX, nextY) {
-  const currentLevel = levels[gameState.currentScreen];
+  const currentLevel = levels[gameState.currentScreen]; // In checkPlatformCollisions function, update the triangle collision check:
 
-  // In checkPlatformCollisions function, update the triangle collision check:
   if (currentLevel.triangles) {
     for (const triangle of currentLevel.triangles) {
       const playerBottom = {
@@ -183,9 +772,8 @@ function checkPlatformCollisions(nextX, nextY) {
           ? (triangle.y2 - triangle.y1) / (triangle.x2 - triangle.x1)
           : (triangle.y1 - triangle.y2) / (triangle.x1 - triangle.x2);
 
-      const expectedY = triangle.y1 + slope * (playerBottom.x - triangle.x1);
+      const expectedY = triangle.y1 + slope * (playerBottom.x - triangle.x1); // Increase collision threshold based on vertical speed
 
-      // Increase collision threshold based on vertical speed
       const speedBasedThreshold = Math.max(3, Math.abs(blok.snelheidY) * 1.5);
 
       if (Math.abs(playerBottom.y - expectedY) < speedBasedThreshold) {
@@ -211,10 +799,20 @@ function checkPlatformCollisions(nextX, nextY) {
   for (const platform of currentLevel.platforms) {
     if (nextX + blok.breedte > platform.x && nextX < platform.x + platform.width) {
       if (blok.y + blok.hoogte <= platform.y && nextY + blok.hoogte > platform.y) {
+        audioManager.playSfx("land");
         nextY = platform.y - blok.hoogte;
         blok.snelheidY = 0;
         blok.snelheidX = 0;
-        blok.opGrond = true;
+        blok.opGrond = true; // Add stun check here
+
+        if (blok.fallDistance > blok.fallThreshold) {
+          audioManager.playSfx("splat");
+          blok.isStunned = true;
+          blok.stunTimer = Date.now();
+          spriteSheet.currentAnimation = "knocked";
+        }
+        blok.fallDistance = 0;
+
         return { x: nextX, y: nextY };
       }
 
@@ -222,6 +820,9 @@ function checkPlatformCollisions(nextX, nextY) {
         nextY = platform.y + platform.height;
         blok.snelheidY = 0;
         blok.snelheidX *= 0.5;
+        audioManager.playSfx("bump");
+        blok.hasCollided = true;
+        spriteSheet.currentAnimation = "bump";
         return { x: nextX, y: nextY };
       }
     }
@@ -251,6 +852,7 @@ function checkPlatformCollisions(nextX, nextY) {
 
 function updateJumpCharge() {
   if (blok.isChargingJump) {
+    spriteSheet.currentAnimation = "charging";
     blok.jumpChargeTime += 16;
     let chargeProgress = Math.min(blok.jumpChargeTime / blok.maxChargeTime, 1);
     blok.springKracht = blok.minJumpForce + (blok.maxJumpForce - blok.minJumpForce) * chargeProgress;
@@ -258,6 +860,8 @@ function updateJumpCharge() {
     if (chargeProgress >= 1) {
       executeJump();
     }
+  } else if (blok.opGrond && Math.abs(blok.snelheidX) < 0.1) {
+    spriteSheet.currentAnimation = "idle";
   }
 }
 
@@ -273,9 +877,15 @@ function executeJump() {
       blok.minHorizontalForce + (blok.maxHorizontalForce - blok.minHorizontalForce) * chargeProgress;
 
     if (keyboard.ArrowLeft) {
+      spriteSheet.currentAnimation = "walking";
+      spriteSheet.facingRight = false;
       blok.snelheidX = -horizontalPower;
     } else if (keyboard.ArrowRight) {
+      spriteSheet.currentAnimation = "walking";
+      spriteSheet.facingRight = true;
       blok.snelheidX = horizontalPower;
+    } else if (blok.opGrond && !blok.isChargingJump) {
+      spriteSheet.currentAnimation = "idle";
     }
 
     blok.isChargingJump = false;
@@ -291,12 +901,30 @@ window.addEventListener("blur", () => {
 });
 
 function handleWallCollision(isLeftWall) {
-  audioManager.playSfx("bump");
-  blok.snelheidX *= -blok.bounceStrength;
-  blok.springKracht *= blok.bounceStrength;
-  blok.snelheidY *= 0.98;
+  if (!blok.opGrond) {
+    audioManager.playSfx("bump");
+    blok.snelheidX *= -blok.bounceStrength;
+    blok.springKracht *= blok.bounceStrength;
+    blok.snelheidY *= 0.98;
+    blok.hasCollided = true;
+    spriteSheet.currentAnimation = "bump";
+  } else {
+    blok.snelheidX = 0;
+  }
 }
 
+function updateAnimation() {
+  const animation = spriteSheet.animations[spriteSheet.currentAnimation];
+  if (animation.frames && Array.isArray(animation.frames)) {
+    animation.frameTimer += 16;
+    if (animation.frameTimer >= animation.frameDurations[animation.currentFrame]) {
+      animation.frameTimer = 0;
+      animation.currentFrame = (animation.currentFrame + 1) % animation.frames.length;
+    }
+  }
+}
+
+// Add updateAnimation() call in spelLus function before drawCharacter:
 function spelLus() {
   ctx.clearRect(0, 0, canvas.width, canvas.height);
   const scaleX = canvas.width / TARGET_WIDTH;
@@ -304,12 +932,15 @@ function spelLus() {
   ctx.scale(scaleX, scaleY);
 
   drawScreen(gameState.currentScreen, 0);
-  ctx.fillStyle = blok.kleur;
-  ctx.fillRect(blok.x, blok.y, blok.breedte, blok.hoogte);
+
+  updateAnimation(); // Add this line
+  drawCharacter();
+
   ctx.setTransform(1, 0, 0, 1, 0, 0);
   updateBlok();
   requestAnimationFrame(spelLus);
 }
+
 function updateBlok() {
   const currentLevel = levels[gameState.currentScreen];
   const isOnTriangle =
@@ -361,9 +992,8 @@ function updateBlok() {
     keyboard.ArrowRight = false;
     keyboard.Space = false;
     blok.isChargingJump = false;
-    blok.isWalking = false;
+    blok.isWalking = false; // Get the current triangle
 
-    // Get the current triangle
     const triangle = currentLevel.triangles.find((t) => {
       const playerBottom = {
         x: blok.x + blok.breedte / 2,
@@ -379,9 +1009,8 @@ function updateBlok() {
       blok.snelheidX = Math.max(-3, Math.min(blok.snelheidX, 3));
       blok.snelheidY = Math.abs(slope * blok.snelheidX);
     }
-  }
+  } // Platform edge detection
 
-  // Platform edge detection
   if (blok.opGrond) {
     let isOnPlatform = false;
     for (const platform of currentLevel.platforms) {
@@ -393,11 +1022,6 @@ function updateBlok() {
         isOnPlatform = true;
         break;
       }
-    }
-    // In updateBlok where ground landing happens:
-    if (blok.opGrond && blok.fallDistance > 0) {
-      audioManager.playSfx("land");
-      blok.fallDistance = 0;
     }
 
     const isOnGround =
@@ -416,26 +1040,30 @@ function updateBlok() {
 
   updateJumpCharge();
 
+  if (blok.isChargingJump) {
+    spriteSheet.currentAnimation = "charging";
+  }
   if (!blok.opGrond) {
-    if (blok.snelheidY > 0) {
-      blok.fallDistance += blok.snelheidY;
+    if (blok.hasCollided && !isOnTriangle) {
+      spriteSheet.currentAnimation = "bump";
+    } else if (blok.snelheidY < 0) {
+      spriteSheet.currentAnimation = "jumpUp";
+    } else {
+      spriteSheet.currentAnimation = "jumpDown";
     }
+    blok.fallDistance += blok.snelheidY;
     blok.snelheidY += blok.zwaartekracht;
   } else {
-    // Only stun if landing on a platform, not on triangles
-    if (blok.fallDistance > blok.fallThreshold && !isOnTriangle) {
-      audioManager.playSfx("splat");
-      blok.isStunned = true;
-      blok.stunTimer = Date.now();
-    }
-    blok.fallDistance = 0;
+    blok.hasCollided = false;
   }
 
   if (blok.isStunned) {
-    blok.kleur = blok.stunnedColor;
+    spriteSheet.currentAnimation = "knocked";
+    blok.snelheidX = 0;
+    blok.snelheidY = 0;
     if (Date.now() - blok.stunTimer >= blok.stunDuration) {
       blok.isStunned = false;
-      blok.kleur = blok.normalColor;
+      spriteSheet.currentAnimation = "idle";
     }
     return;
   } else {
@@ -447,10 +1075,15 @@ function updateBlok() {
     if (keyboard.ArrowLeft) {
       nextPosition = blok.x - blok.walkSpeed;
       blok.jumpDirection = -1;
-    }
-    if (keyboard.ArrowRight) {
+      spriteSheet.currentAnimation = "walking";
+      spriteSheet.facingRight = false;
+    } else if (keyboard.ArrowRight) {
       nextPosition = blok.x + blok.walkSpeed;
       blok.jumpDirection = 1;
+      spriteSheet.currentAnimation = "walking";
+      spriteSheet.facingRight = true;
+    } else {
+      spriteSheet.currentAnimation = "idle";
     }
     blok.x = nextPosition;
   }
@@ -518,8 +1151,7 @@ function drawScreen(screenIndex, offset) {
       ctx.closePath();
       ctx.fill();
     }
-  }
-  // Draw detection points
+  } // Draw detection points
   ctx.fillStyle = "yellow";
   ctx.beginPath();
   ctx.arc(blok.x, blok.y + blok.hoogte, 3, 0, Math.PI * 2);

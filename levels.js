@@ -195,8 +195,8 @@ const LEVEL_DATA = {
       { x: MAX_LEFT + 15, y: MAX_HEIGHT + 364, width: 130, height: 145 },
       { x: MAX_LEFT + 15, y: MAX_HEIGHT + 508, width: 30, height: 179 },
 
-      { x: MAX_LEFT + 175, y: MAX_HEIGHT, width: 240, height: 174 },
-      { x: MAX_LEFT + 175, y: MAX_HEIGHT + 50, width: 320, height: 124 },
+      { x: MAX_LEFT + 175, y: MAX_HEIGHT, width: 240, height: 134 },
+      { x: MAX_LEFT + 175, y: MAX_HEIGHT + 100, width: 320, height: 84 },
 
       { x: MAX_LEFT + 15, y: MAX_HEIGHT + 686, width: 160, height: 30 },
 
@@ -224,11 +224,11 @@ const LEVEL_DATA = {
       },
       {
         x1: 415,
-        y1: MAX_HEIGHT, // Start point
+        y1: MAX_HEIGHT + 50, // Start point
         x2: 495,
-        y2: MAX_HEIGHT + 50, // End point
+        y2: MAX_HEIGHT + 100, // End point
         x3: 415,
-        y3: MAX_HEIGHT + 50, // Bottom point
+        y3: MAX_HEIGHT + 100, // Bottom point
         direction: "right",
       },
     ],
