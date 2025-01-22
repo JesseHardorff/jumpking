@@ -124,7 +124,7 @@ const LEVEL_DATA = {
     ground: { y: MIN_HEIGHT + 100, height: 0 },
     platforms: [
       { x: MAX_LEFT + 365, y: 0, width: 220, height: 508, color: "#222B2C", decorative: true },
-      { x: MAX_LEFT + 165, y: 510, width: 220, height: 22s0, color: "#222B2C", decorative: true },
+      { x: MAX_LEFT + 165, y: 510, width: 220, height: 220, color: "#222B2C", decorative: true },
 
       { x: MAX_RIGHT - 220, y: MIN_HEIGHT - 30, width: 110, height: 30, color: "#193C3A" },
       { x: MAX_RIGHT - 220, y: MIN_HEIGHT - 301, width: 110, height: 30, color: "#193C3A" },
