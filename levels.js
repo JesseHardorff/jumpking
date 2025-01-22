@@ -51,44 +51,44 @@ const LEVEL_DATA = {
   level4: {
     ground: { y: MIN_HEIGHT + 100, height: 0 }, // Ground hidden below view
     platforms: [
-      { x: 270, y: MIN_HEIGHT - 77, width: 144, height: 113 },
-      { x: 270, y: MIN_HEIGHT - 285, width: 140, height: 30 },
-      { x: 15, y: MIN_HEIGHT - 285, width: 110, height: 30 },
-      { x: 592, y: MIN_HEIGHT - 395, width: 94, height: 140 },
-      { x: 270, y: MIN_HEIGHT - 542, width: 76, height: 157 },
-      { x: 270, y: MAX_HEIGHT, width: 31, height: 175 },
-      { x: 654, y: MIN_HEIGHT - 573, width: 32, height: 179 },
-      { x: 654, y: MIN_HEIGHT - 573, width: 142, height: 32 },
-      { x: 654, y: MAX_HEIGHT, width: 32, height: 31 },
-      { x: MAX_RIGHT - 95, y: MIN_HEIGHT - 450, width: 80, height: 32 },
+      { x: 270, y: MIN_HEIGHT - 79, width: 144, height: 113, color: "#1B4017" },
+      { x: 270, y: MIN_HEIGHT - 285, width: 140, height: 30, color: "#3b3834" },
+      { x: 15, y: MIN_HEIGHT - 285, width: 110, height: 30, color: "#67894A" },
+      { x: 592, y: MIN_HEIGHT - 395, width: 94, height: 140, color: "#3b3834" },
+      { x: 270, y: MIN_HEIGHT - 542, width: 76, height: 157, color: "#3b3834" },
+      { x: 270, y: MAX_HEIGHT, width: 31, height: 175, color: "#3b3834" },
+      { x: 654, y: MIN_HEIGHT - 573, width: 32, height: 179, color: "#3b3834" },
+      { x: 654, y: MIN_HEIGHT - 573, width: 142, height: 32, color: "#3b3834" },
+      { x: 654, y: MAX_HEIGHT, width: 32, height: 31, color: "#3b3834" },
+      { x: MAX_RIGHT - 95, y: MIN_HEIGHT - 450, width: 80, height: 32, color: "#67894A" },
 
-      { x: MAX_LEFT, y: 0, width: 15, height: MIN_HEIGHT },
-      { x: MAX_RIGHT - 15, y: 0, width: 15, height: MIN_HEIGHT },
+      { x: MAX_LEFT, y: 0, width: 15, height: MIN_HEIGHT, color: "#67894A" },
+      { x: MAX_RIGHT - 15, y: 0, width: 15, height: MIN_HEIGHT, color: "#67894A" },
     ],
   },
   level5: {
     ground: { y: MIN_HEIGHT + 100, height: 0 }, // Ground hidden below view
     platforms: [
-      { x: 654, y: MIN_HEIGHT - 94, width: 32, height: 94 },
-      { x: 654, y: MIN_HEIGHT - 94, width: 78, height: 32 },
+      { x: 654, y: MIN_HEIGHT - 94, width: 32, height: 94, color: "#3b3834" },
+      { x: 654, y: MIN_HEIGHT - 94, width: 78, height: 32, color: "#3b3834" },
 
-      { x: 654, y: MIN_HEIGHT - 240, width: 78, height: 32 },
-      { x: 270, y: MIN_HEIGHT - 94, width: 31, height: 94 },
+      { x: 654, y: MIN_HEIGHT - 240, width: 78, height: 32, color: "#45191B" },
+      { x: 270, y: MIN_HEIGHT - 94, width: 31, height: 94, color: "#3b3834" },
 
-      { x: 223, y: MIN_HEIGHT - 94, width: 78, height: 32 },
-      { x: MAX_LEFT + 15, y: MIN_HEIGHT - 240, width: 68, height: 32 },
-      { x: MAX_RIGHT - 74, y: MIN_HEIGHT - 400, width: 60, height: 50 },
+      { x: 223, y: MIN_HEIGHT - 94, width: 78, height: 32, color: "#3b3834" },
+      { x: MAX_LEFT + 15, y: MIN_HEIGHT - 240, width: 68, height: 32, color: "#45191B" },
+      { x: MAX_RIGHT - 74, y: MIN_HEIGHT - 400, width: 60, height: 50, color: "#45191B" },
 
-      { x: 577, y: MIN_HEIGHT - 540, width: 60, height: 31 },
-      { x: 450, y: MIN_HEIGHT - 575, width: 60, height: 31 },
-      { x: 323, y: MIN_HEIGHT - 605, width: 60, height: 31 },
+      { x: 577, y: MIN_HEIGHT - 540, width: 60, height: 31, color: "#45191B" },
+      { x: 450, y: MIN_HEIGHT - 575, width: 60, height: 31, color: "#45191B" },
+      { x: 323, y: MIN_HEIGHT - 605, width: 60, height: 31, color: "#45191B" },
 
-      { x: 80, y: MIN_HEIGHT - 540, width: 60, height: 31 },
+      { x: 80, y: MIN_HEIGHT - 540, width: 60, height: 31, color: "#45191B" },
 
-      { x: 304, y: MAX_HEIGHT, width: 350, height: 31 },
+      { x: 304, y: MAX_HEIGHT, width: 350, height: 31, color: "#45191B" },
 
-      { x: MAX_LEFT, y: 0, width: 15, height: MIN_HEIGHT },
-      { x: MAX_RIGHT - 15, y: 0, width: 15, height: MIN_HEIGHT },
+      { x: MAX_LEFT, y: 0, width: 15, height: MIN_HEIGHT, color: "#45191B" },
+      { x: MAX_RIGHT - 15, y: 0, width: 15, height: MIN_HEIGHT, color: "#45191B" },
     ],
   },
   level6: {

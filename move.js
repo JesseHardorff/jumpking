@@ -65,8 +65,8 @@ const levels = [
 ];
 
 const gameState = {
-  currentScreen: 0,
-  adminMode: false,
+  currentScreen: 3,
+  adminMode: true,
   screenTransition: {
     active: false,
     offset: 0,
@@ -708,15 +708,19 @@ function updateBlok() {
 
 function drawScreen(screenIndex, offset) {
   const level = levels[screenIndex];
-  ctx.fillStyle = GROUND_COLOR;
-  ctx.fillRect(0, level.ground.y - offset, TARGET_WIDTH, level.ground.height);
 
+  // Draw background if exists
   if (backgroundImages[screenIndex + 1]) {
     ctx.drawImage(backgroundImages[screenIndex + 1], 0, -offset, TARGET_WIDTH, TARGET_HEIGHT);
   }
 
-  ctx.fillStyle = "#666666";
+  // Draw ground
+  ctx.fillStyle = GROUND_COLOR;
+  ctx.fillRect(0, level.ground.y - offset, TARGET_WIDTH, level.ground.height);
+
+  // Draw platforms with individual colors
   for (const platform of level.platforms) {
+    ctx.fillStyle = platform.color || "#666666"; // Use platform color or default if not specified
     ctx.fillRect(platform.x, platform.y - offset, platform.width, platform.height);
   }
 
