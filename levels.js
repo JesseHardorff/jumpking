@@ -8,6 +8,7 @@ const MAX_HEIGHT = 0;
 
 const LEVEL_DATA = {
   level1: {
+    backgroundColor: "#456441",
     ground: { y: FLOOR_HEIGHT, height: 65 },
     platforms: [
       { x: MAX_LEFT, y: FLOOR_HEIGHT - 285, width: 255, height: 285 },
@@ -335,9 +336,7 @@ const LEVEL_DATA = {
       { x: MAX_LEFT + 333, y: MIN_HEIGHT - 300, width: 50, height: 50 },
 
       { x: MAX_LEFT + 633, y: MIN_HEIGHT - 500, width: 40, height: 50 },
-      { x: MAX_LEFT + 563, y: MIN_HEIGHT - 660, width: 50, height: 20 },
-      // { x: MAX_LEFT + 503, y: MIN_HEIGHT - 640, width: 50, height: 20 },
-
+      { x: MAX_LEFT + 563, y: MIN_HEIGHT - 660, width: 50, height: 20 }, // { x: MAX_LEFT + 503, y: MIN_HEIGHT - 640, width: 50, height: 20 },
       { x: MAX_LEFT + 225, y: MAX_HEIGHT, width: 60, height: 86 },
 
       { x: MAX_RIGHT - 189, y: MIN_HEIGHT - 580, width: 50, height: 300 },
