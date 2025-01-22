@@ -65,7 +65,7 @@ const levels = [
 ];
 
 const gameState = {
-  currentScreen: 3,
+  currentScreen: 5,
   adminMode: true,
   screenTransition: {
     active: false,
@@ -372,6 +372,7 @@ function checkPlatformCollisions(nextX, nextY) {
   }
 
   for (const platform of currentLevel.platforms) {
+    if (platform.decorative) continue;
     if (nextX + blok.breedte > platform.x && nextX < platform.x + platform.width) {
       if (blok.y + blok.hoogte <= platform.y && nextY + blok.hoogte > platform.y) {
         audioManager.playSfx("land");
@@ -709,7 +710,11 @@ function updateBlok() {
 function drawScreen(screenIndex, offset) {
   const level = levels[screenIndex];
 
-  // Draw background if exists
+  if (level.backgroundColor) {
+    ctx.fillStyle = level.backgroundColor;
+    ctx.fillRect(0, 0, TARGET_WIDTH, TARGET_HEIGHT);
+  }
+
   if (backgroundImages[screenIndex + 1]) {
     ctx.drawImage(backgroundImages[screenIndex + 1], 0, -offset, TARGET_WIDTH, TARGET_HEIGHT);
   }
@@ -718,21 +723,33 @@ function drawScreen(screenIndex, offset) {
   ctx.fillStyle = GROUND_COLOR;
   ctx.fillRect(0, level.ground.y - offset, TARGET_WIDTH, level.ground.height);
 
-  // Draw platforms with individual colors
+  // Draw platforms
   for (const platform of level.platforms) {
-    ctx.fillStyle = platform.color || "#666666"; // Use platform color or default if not specified
+    ctx.fillStyle = platform.color || "#666666";
     ctx.fillRect(platform.x, platform.y - offset, platform.width, platform.height);
+
+    if (level.platformOutlineColor) {
+      ctx.strokeStyle = level.platformOutlineColor;
+      ctx.lineWidth = level.platformOutlineWidth || 2;
+      ctx.strokeRect(platform.x, platform.y - offset, platform.width, platform.height);
+    }
   }
 
   if (level.triangles) {
-    ctx.fillStyle = "#888888";
     for (const triangle of level.triangles) {
+      ctx.fillStyle = triangle.color || level.triangleColor || "#888888";
       ctx.beginPath();
       ctx.moveTo(triangle.x1, triangle.y1);
       ctx.lineTo(triangle.x2, triangle.y2);
       ctx.lineTo(triangle.x3, triangle.y3);
       ctx.closePath();
       ctx.fill();
+
+      if (level.triangleOutlineColor) {
+        ctx.strokeStyle = level.triangleOutlineColor;
+        ctx.lineWidth = level.triangleOutlineWidth || 2;
+        ctx.stroke();
+      }
     }
   } // Draw detection points
   ctx.fillStyle = "yellow";

@@ -94,51 +94,61 @@ const LEVEL_DATA = {
   level6: {
     ground: { y: MIN_HEIGHT + 100, height: 0 }, // Ground hidden below view
     platforms: [
-      { x: 304, y: MIN_HEIGHT - 62, width: 350, height: 62 },
+      { x: MAX_LEFT + 15, y: 0, width: 955, height: 508, color: "#101515", decorative: true },
+      { x: MAX_LEFT + 365, y: 0, width: 220, height: 508, color: "#222B2C", decorative: true },
 
-      { x: MAX_RIGHT - 380, y: MIN_HEIGHT - 558, width: 366, height: 350 },
-      { x: MAX_RIGHT - 305, y: MAX_HEIGHT, width: 195, height: 77 },
-      { x: MAX_RIGHT - 380, y: MAX_HEIGHT, width: 195, height: 47 },
+      { x: 304, y: MIN_HEIGHT - 62, width: 350, height: 62, color: "#45191B" },
 
-      { x: MAX_RIGHT - 700, y: MIN_HEIGHT - 238, width: 90, height: 30 },
-      { x: MAX_LEFT, y: MIN_HEIGHT - 350, width: 110, height: 30 },
-      { x: MAX_LEFT + 15, y: MAX_HEIGHT, width: 368, height: 30 },
-      { x: 273, y: MAX_HEIGHT, width: 110, height: 110 },
+      { x: MAX_RIGHT - 380, y: MIN_HEIGHT - 558, width: 366, height: 350, color: "#193C3A" },
+      { x: MAX_RIGHT - 305, y: MAX_HEIGHT, width: 195, height: 77, color: "#193C3A" },
+      { x: MAX_RIGHT - 380, y: MAX_HEIGHT, width: 195, height: 47, color: "#193C3A" },
 
-      { x: MAX_RIGHT - 800, y: MIN_HEIGHT - 492, width: 225, height: 32 },
-      { x: MAX_RIGHT - 800, y: MIN_HEIGHT - 573, width: 30, height: 82 },
-      { x: MAX_RIGHT - 845, y: MIN_HEIGHT - 573, width: 50, height: 30 },
+      { x: MAX_RIGHT - 700, y: MIN_HEIGHT - 238, width: 90, height: 30, color: "#193C3A" },
+      { x: MAX_LEFT, y: MIN_HEIGHT - 350, width: 110, height: 30, color: "#193C3A" },
+      { x: MAX_LEFT + 15, y: MAX_HEIGHT, width: 368, height: 30, color: "#193C3A" },
+      { x: 273, y: MAX_HEIGHT, width: 110, height: 110, color: "#193C3A" },
 
-      { x: MAX_LEFT, y: 0, width: 15, height: MIN_HEIGHT },
-      { x: MAX_RIGHT - 15, y: 0, width: 15, height: MIN_HEIGHT },
+      { x: MAX_RIGHT - 800, y: MIN_HEIGHT - 492, width: 225, height: 32, color: "#193C3A" },
+      { x: MAX_RIGHT - 800, y: MIN_HEIGHT - 573, width: 30, height: 82, color: "#193C3A" },
+      { x: MAX_RIGHT - 845, y: MIN_HEIGHT - 573, width: 50, height: 30, color: "#193C3A" },
+
+      { x: MAX_LEFT, y: 0, width: 15, height: MIN_HEIGHT, color: "#193C3A" },
+      { x: MAX_RIGHT - 15, y: 0, width: 15, height: MIN_HEIGHT, color: "#193C3A" },
     ],
   },
   level7: {
+    backgroundColor: "#101515",
+    triangleColor: "#3D283A",
+    triangleOutlineWidth: 0.4,
+    triangleOutlineColor: "#D3AECD",
     ground: { y: MIN_HEIGHT + 100, height: 0 },
     platforms: [
-      { x: MAX_RIGHT - 220, y: MIN_HEIGHT - 30, width: 110, height: 30 },
-      { x: MAX_RIGHT - 220, y: MIN_HEIGHT - 301, width: 110, height: 30 },
-      { x: MAX_RIGHT - 380, y: MIN_HEIGHT - 301, width: 161, height: 301 },
+      { x: MAX_LEFT + 365, y: 0, width: 220, height: 508, color: "#222B2C", decorative: true },
+      { x: MAX_LEFT + 165, y: 510, width: 220, height: 22s0, color: "#222B2C", decorative: true },
 
-      { x: MAX_RIGHT - 190, y: MIN_HEIGHT - 495, width: 175, height: 47 },
-      { x: MAX_RIGHT - 190, y: MAX_HEIGHT, width: 175, height: 222 },
-      { x: MAX_RIGHT - 380, y: MIN_HEIGHT - 495, width: 191, height: 96 },
+      { x: MAX_RIGHT - 220, y: MIN_HEIGHT - 30, width: 110, height: 30, color: "#193C3A" },
+      { x: MAX_RIGHT - 220, y: MIN_HEIGHT - 301, width: 110, height: 30, color: "#193C3A" },
+      { x: MAX_RIGHT - 380, y: MIN_HEIGHT - 301, width: 161, height: 301, color: "#193C3A" },
 
-      { x: MAX_LEFT + 305, y: MAX_HEIGHT + 315, width: 77, height: 70 },
-      { x: MAX_LEFT + 305, y: MAX_HEIGHT, width: 155, height: 316 },
-      { x: MAX_LEFT + 459, y: MAX_HEIGHT, width: 130, height: 35 },
+      { x: MAX_RIGHT - 190, y: MIN_HEIGHT - 495, width: 175, height: 47, color: "#193C3A" },
+      { x: MAX_RIGHT - 190, y: MAX_HEIGHT, width: 175, height: 222, color: "#193C3A" },
+      { x: MAX_RIGHT - 380, y: MIN_HEIGHT - 495, width: 191, height: 96, color: "#193C3A" },
 
-      { x: MAX_LEFT + 253, y: MAX_HEIGHT + 110, width: 53, height: 85 },
+      { x: MAX_LEFT + 305, y: MAX_HEIGHT + 315, width: 77, height: 70, color: "#193C3A" },
+      { x: MAX_LEFT + 305, y: MAX_HEIGHT, width: 155, height: 316, color: "#193C3A" },
+      { x: MAX_LEFT + 459, y: MAX_HEIGHT, width: 130, height: 35, color: "#193C3A" },
 
-      { x: MAX_LEFT + 15, y: MAX_HEIGHT, width: 160, height: 33 },
-      { x: MAX_LEFT + 15, y: MAX_HEIGHT + 477, width: 190, height: 239 },
-      { x: MAX_LEFT + 15, y: MAX_HEIGHT + 335, width: 50, height: 150 },
+      { x: MAX_LEFT + 253, y: MAX_HEIGHT + 110, width: 53, height: 85, color: "#193C3A" },
 
-      { x: MAX_LEFT + 375, y: MAX_HEIGHT + 480, width: 40, height: 32 },
-      { x: MAX_RIGHT - 685, y: MIN_HEIGHT - 237, width: 140, height: 3 },
+      { x: MAX_LEFT + 15, y: MAX_HEIGHT, width: 160, height: 33, color: "#193C3A" },
+      { x: MAX_LEFT + 15, y: MAX_HEIGHT + 477, width: 190, height: 239, color: "#193C3A" },
+      { x: MAX_LEFT + 15, y: MAX_HEIGHT + 335, width: 50, height: 150, color: "#193C3A" },
 
-      { x: MAX_LEFT, y: 0, width: 15, height: MIN_HEIGHT },
-      { x: MAX_RIGHT - 15, y: 0, width: 15, height: MIN_HEIGHT },
+      { x: MAX_LEFT + 375, y: MAX_HEIGHT + 480, width: 40, height: 32, color: "#193C3A" },
+      { x: MAX_RIGHT - 685, y: MIN_HEIGHT - 237, width: 140, height: 3, color: "#193C3A" },
+
+      { x: MAX_LEFT, y: 0, width: 15, height: MIN_HEIGHT, color: "#193C3A" },
+      { x: MAX_RIGHT - 15, y: 0, width: 15, height: MIN_HEIGHT, color: "#193C3A" },
     ],
     triangles: [
       {
@@ -181,28 +191,32 @@ const LEVEL_DATA = {
   },
 
   level8: {
+    backgroundColor: "#101515",
+    triangleColor: "#3D283A",
+    triangleOutlineWidth: 0.4,
+    triangleOutlineColor: "#D3AECD",
     ground: { y: MIN_HEIGHT + 100, height: 0 }, // Ground hidden below view
     platforms: [
-      { x: MAX_RIGHT - 92, y: MIN_HEIGHT - 270, width: 77, height: 270 },
-      { x: MAX_RIGHT - 190, y: MIN_HEIGHT - 77, width: 100, height: 77 },
+      { x: MAX_RIGHT - 92, y: MIN_HEIGHT - 270, width: 77, height: 270, color: "#193C3A" },
+      { x: MAX_RIGHT - 190, y: MIN_HEIGHT - 77, width: 100, height: 77, color: "#193C3A" },
 
-      { x: MAX_RIGHT - 655, y: MIN_HEIGHT - 238, width: 190, height: 238 },
-      { x: MAX_RIGHT - 555, y: MIN_HEIGHT - 82, width: 185, height: 82 },
+      { x: MAX_RIGHT - 655, y: MIN_HEIGHT - 238, width: 190, height: 238, color: "#193C3A" },
+      { x: MAX_RIGHT - 555, y: MIN_HEIGHT - 82, width: 185, height: 82, color: "#193C3A" },
 
-      { x: MAX_RIGHT - 92, y: MAX_HEIGHT, width: 77, height: 174 },
+      { x: MAX_RIGHT - 92, y: MAX_HEIGHT, width: 77, height: 174, color: "#193C3A" },
 
-      { x: MAX_LEFT + 15, y: MAX_HEIGHT + 128, width: 50, height: 174 },
-      { x: MAX_LEFT + 15, y: MAX_HEIGHT + 285, width: 480, height: 80 },
-      { x: MAX_LEFT + 15, y: MAX_HEIGHT + 364, width: 130, height: 145 },
-      { x: MAX_LEFT + 15, y: MAX_HEIGHT + 508, width: 30, height: 179 },
+      { x: MAX_LEFT + 15, y: MAX_HEIGHT + 128, width: 50, height: 174, color: "#193C3A" },
+      { x: MAX_LEFT + 15, y: MAX_HEIGHT + 285, width: 480, height: 80, color: "#3D283A" },
+      { x: MAX_LEFT + 15, y: MAX_HEIGHT + 364, width: 130, height: 145, color: "#193C3A" },
+      { x: MAX_LEFT + 15, y: MAX_HEIGHT + 508, width: 30, height: 179, color: "#193C3A" },
 
-      { x: MAX_LEFT + 175, y: MAX_HEIGHT, width: 240, height: 134 },
-      { x: MAX_LEFT + 175, y: MAX_HEIGHT + 100, width: 320, height: 84 },
+      { x: MAX_LEFT + 175, y: MAX_HEIGHT, width: 240, height: 134, color: "#193C3A" },
+      { x: MAX_LEFT + 175, y: MAX_HEIGHT + 100, width: 320, height: 84, color: "#193C3A" },
 
-      { x: MAX_LEFT + 15, y: MAX_HEIGHT + 686, width: 160, height: 30 },
+      { x: MAX_LEFT + 15, y: MAX_HEIGHT + 686, width: 160, height: 30, color: "#193C3A" },
 
-      { x: MAX_LEFT, y: 0, width: 15, height: MIN_HEIGHT },
-      { x: MAX_RIGHT - 15, y: 0, width: 15, height: MIN_HEIGHT },
+      { x: MAX_LEFT, y: 0, width: 15, height: MIN_HEIGHT, color: "#193C3A" },
+      { x: MAX_RIGHT - 15, y: 0, width: 15, height: MIN_HEIGHT, color: "#193C3A" },
     ],
     triangles: [
       {
@@ -236,34 +250,38 @@ const LEVEL_DATA = {
   },
 
   level9: {
+    backgroundColor: "#101515",
+    triangleColor: "#3D283A",
+    triangleOutlineWidth: 0.4,
+    triangleOutlineColor: "#D3AECD",
     ground: { y: MIN_HEIGHT + 100, height: 0 }, // Ground hidden below view
     platforms: [
-      { x: MAX_LEFT + 15, y: MAX_HEIGHT, width: 190, height: 35 },
+      { x: MAX_LEFT + 15, y: MAX_HEIGHT, width: 190, height: 35, color: "#193C3A" },
 
-      { x: MAX_LEFT + 305, y: MAX_HEIGHT, width: 140, height: 35 },
-      { x: MAX_LEFT + 415, y: MAX_HEIGHT, width: 30, height: 318 },
-      { x: MAX_LEFT + 415, y: MAX_HEIGHT + 192, width: 95, height: 126 },
-      { x: MAX_LEFT + 350, y: MAX_HEIGHT + 268, width: 80, height: 50 },
+      { x: MAX_LEFT + 305, y: MAX_HEIGHT, width: 140, height: 35, color: "#193C3A" },
+      { x: MAX_LEFT + 415, y: MAX_HEIGHT, width: 30, height: 318, color: "#193C3A" },
+      { x: MAX_LEFT + 415, y: MAX_HEIGHT + 192, width: 95, height: 126, color: "#193C3A" },
+      { x: MAX_LEFT + 350, y: MAX_HEIGHT + 268, width: 80, height: 50, color: "#193C3A" },
 
-      { x: MAX_LEFT + 785, y: MAX_HEIGHT, width: 160, height: 30 },
+      { x: MAX_LEFT + 785, y: MAX_HEIGHT, width: 160, height: 30, color: "#193C3A" },
 
-      { x: MAX_LEFT + 785, y: MAX_HEIGHT + 192, width: 60, height: 60 },
+      { x: MAX_LEFT + 785, y: MAX_HEIGHT + 192, width: 60, height: 60, color: "#193C3A" },
 
-      { x: MAX_LEFT + 785, y: MAX_HEIGHT + 414, width: 62, height: 130 },
+      { x: MAX_LEFT + 785, y: MAX_HEIGHT + 414, width: 62, height: 130, color: "rgba(0, 0, 0, 0)" },
 
-      { x: MAX_LEFT + 594, y: MAX_HEIGHT + 414, width: 62, height: 130 },
+      { x: MAX_LEFT + 594, y: MAX_HEIGHT + 414, width: 62, height: 130, color: "rgba(0, 0, 0, 0)" },
 
-      { x: MAX_LEFT + 403, y: MAX_HEIGHT + 414, width: 62, height: 130 },
+      { x: MAX_LEFT + 403, y: MAX_HEIGHT + 414, width: 62, height: 130, color: "rgba(0, 0, 0, 0)" },
 
-      { x: MAX_LEFT + 175, y: MAX_HEIGHT + 175, width: 33, height: 250 },
-      { x: MAX_LEFT + 175, y: MAX_HEIGHT + 414, width: 94, height: 302 },
+      { x: MAX_LEFT + 175, y: MAX_HEIGHT + 175, width: 33, height: 250, color: "#193C3A" },
+      { x: MAX_LEFT + 175, y: MAX_HEIGHT + 414, width: 94, height: 302, color: "#193C3A" },
 
-      { x: MAX_LEFT + 15, y: MAX_HEIGHT + 335, width: 50, height: 46 },
+      { x: MAX_LEFT + 15, y: MAX_HEIGHT + 335, width: 50, height: 46, color: "#3D283A" },
 
-      { x: MAX_LEFT + 126, y: MAX_HEIGHT + 590, width: 50, height: 46 },
+      { x: MAX_LEFT + 126, y: MAX_HEIGHT + 590, width: 50, height: 46, color: "#3D283A" },
 
-      { x: MAX_LEFT, y: 0, width: 15, height: MIN_HEIGHT },
-      { x: MAX_RIGHT - 15, y: 0, width: 15, height: MIN_HEIGHT },
+      { x: MAX_LEFT, y: 0, width: 15, height: MIN_HEIGHT, color: "#193C3A" },
+      { x: MAX_RIGHT - 15, y: 0, width: 15, height: MIN_HEIGHT, color: "#193C3A" },
     ],
     triangles: [
       {
@@ -287,31 +305,35 @@ const LEVEL_DATA = {
     ],
   },
   level10: {
+    backgroundColor: "#101515",
+    triangleColor: "#3D283A",
+    triangleOutlineWidth: 0.4,
+    triangleOutlineColor: "#D3AECD",
     ground: { y: MIN_HEIGHT + 100, height: 0 },
     platforms: [
-      { x: MAX_RIGHT - 175, y: MIN_HEIGHT - 65, width: 200, height: 130 },
+      { x: MAX_RIGHT - 175, y: MIN_HEIGHT - 65, width: 200, height: 130, color: "#193C3A" },
 
-      { x: MAX_RIGHT - 650, y: MIN_HEIGHT - 165, width: 135, height: 170 },
+      { x: MAX_RIGHT - 650, y: MIN_HEIGHT - 165, width: 135, height: 170, color: "#193C3A" },
 
-      { x: MAX_LEFT, y: MIN_HEIGHT - 230, width: 110, height: 230 },
+      { x: MAX_LEFT, y: MIN_HEIGHT - 230, width: 110, height: 230, color: "#193C3A" },
 
-      { x: MAX_LEFT + 15, y: MIN_HEIGHT - 70, width: 190, height: 70 },
+      { x: MAX_LEFT + 15, y: MIN_HEIGHT - 70, width: 190, height: 70, color: "#193C3A" },
 
-      { x: MAX_RIGHT - 800, y: MIN_HEIGHT - 390, width: 175, height: 60 },
+      { x: MAX_RIGHT - 800, y: MIN_HEIGHT - 390, width: 175, height: 60, color: "#193C3A" },
 
-      { x: MAX_LEFT, y: MAX_HEIGHT, width: 334, height: 226 },
+      { x: MAX_LEFT, y: MAX_HEIGHT, width: 334, height: 226, color: "#193C3A" },
 
-      { x: MAX_LEFT + 594, y: MAX_HEIGHT + 214, width: 50, height: 130 },
+      { x: MAX_LEFT + 594, y: MAX_HEIGHT + 214, width: 50, height: 130, color: "#193C3A" },
 
-      { x: MAX_RIGHT - 189, y: MIN_HEIGHT - 690, width: 175, height: 340 },
+      { x: MAX_RIGHT - 189, y: MIN_HEIGHT - 690, width: 175, height: 340, color: "#193C3A" },
 
-      { x: MAX_RIGHT - 334, y: MAX_HEIGHT, width: 60, height: 60 },
-      { x: MAX_RIGHT - 189, y: MAX_HEIGHT, width: 200, height: 60 },
+      { x: MAX_RIGHT - 334, y: MAX_HEIGHT, width: 60, height: 60, color: "#193C3A" },
+      { x: MAX_RIGHT - 189, y: MAX_HEIGHT, width: 200, height: 60, color: "#193C3A" },
 
-      { x: MAX_RIGHT - 800, y: MIN_HEIGHT - 630, width: 225, height: 60 },
+      { x: MAX_RIGHT - 800, y: MIN_HEIGHT - 630, width: 225, height: 60, color: "#193C3A" },
 
-      { x: MAX_LEFT, y: 0, width: 15, height: MIN_HEIGHT },
-      { x: MAX_RIGHT - 15, y: 0, width: 15, height: MIN_HEIGHT },
+      { x: MAX_LEFT, y: 0, width: 15, height: MIN_HEIGHT, color: "#193C3A" },
+      { x: MAX_RIGHT - 15, y: 0, width: 15, height: MIN_HEIGHT, color: "#193C3A" },
     ],
     triangles: [
       {
@@ -326,23 +348,30 @@ const LEVEL_DATA = {
     ],
   },
   level11: {
+    backgroundColor: "#101515",
+    triangleColor: "#3D283A",
+    triangleOutlineWidth: 0.4,
+    triangleOutlineColor: "#D3AECD",
     ground: { y: MIN_HEIGHT + 100, height: 0 },
     platforms: [
-      { x: MAX_LEFT, y: MIN_HEIGHT - 60, width: 334, height: 60 },
-      { x: MAX_RIGHT - 189, y: MIN_HEIGHT - 60, width: 200, height: 60 },
-      { x: MAX_RIGHT - 334, y: MIN_HEIGHT - 60, width: 60, height: 60 },
+      { x: MAX_LEFT + 300, y: 0, width: 515, height: MIN_HEIGHT, color: "#202020", decorative: true },
+      { x: MAX_LEFT + 224, y: 0, width: 515, height: 250, color: "#202020", decorative: true },
 
-      { x: MAX_LEFT + 284, y: MIN_HEIGHT - 480, width: 50, height: 300 },
-      { x: MAX_LEFT + 333, y: MIN_HEIGHT - 300, width: 50, height: 50 },
+      { x: MAX_LEFT, y: MIN_HEIGHT - 60, width: 334, height: 60, color: "#193C3A" },
+      { x: MAX_RIGHT - 189, y: MIN_HEIGHT - 60, width: 200, height: 60, color: "#193C3A" },
+      { x: MAX_RIGHT - 334, y: MIN_HEIGHT - 60, width: 60, height: 60, color: "#193C3A" },
 
-      { x: MAX_LEFT + 633, y: MIN_HEIGHT - 500, width: 40, height: 50 },
-      { x: MAX_LEFT + 563, y: MIN_HEIGHT - 660, width: 50, height: 20 }, // { x: MAX_LEFT + 503, y: MIN_HEIGHT - 640, width: 50, height: 20 },
-      { x: MAX_LEFT + 225, y: MAX_HEIGHT, width: 60, height: 86 },
+      { x: MAX_LEFT + 284, y: MIN_HEIGHT - 480, width: 50, height: 300, color: "#5c5c5c" },
+      { x: MAX_LEFT + 333, y: MIN_HEIGHT - 300, width: 50, height: 50, color: "#5c5c5c" },
 
-      { x: MAX_RIGHT - 189, y: MIN_HEIGHT - 580, width: 50, height: 300 },
+      { x: MAX_LEFT + 633, y: MIN_HEIGHT - 500, width: 40, height: 50, color: "#5c5c5c" },
+      { x: MAX_LEFT + 563, y: MIN_HEIGHT - 660, width: 50, height: 20, color: "#5c5c5c" }, // { x: MAX_LEFT + 503, y: MIN_HEIGHT - 640, width: 50, height: 20 },
+      { x: MAX_LEFT + 225, y: MAX_HEIGHT, width: 60, height: 86, color: "#5c5c5c" },
 
-      { x: MAX_RIGHT - 189, y: MIN_HEIGHT - 880, width: 50, height: 200 },
-      { x: MAX_RIGHT - 210, y: MIN_HEIGHT - 580, width: 50, height: 20 },
+      { x: MAX_RIGHT - 189, y: MIN_HEIGHT - 580, width: 50, height: 300, color: "#5c5c5c" },
+
+      { x: MAX_RIGHT - 189, y: MIN_HEIGHT - 880, width: 50, height: 200, color: "#5c5c5c" },
+      { x: MAX_RIGHT - 210, y: MIN_HEIGHT - 580, width: 50, height: 20, color: "#5c5c5c" },
     ],
     triangles: [
       {
@@ -368,77 +397,100 @@ const LEVEL_DATA = {
   level12: {
     ground: { y: MIN_HEIGHT + 100, height: 0 },
     platforms: [
-      { x: MAX_LEFT + 224, y: MIN_HEIGHT - 120, width: 60, height: 300 },
-      { x: MAX_LEFT + 224, y: MIN_HEIGHT - 520, width: 30, height: 90 },
-      { x: MAX_LEFT + 224, y: MIN_HEIGHT - 520, width: 90, height: 30 },
-      { x: MAX_LEFT + 224, y: MAX_HEIGHT, width: 60, height: 60 },
+      { x: MAX_LEFT + 224, y: 0, width: 500, height: MIN_HEIGHT, color: "#202020", decorative: true },
+      { x: MAX_LEFT + 180, y: 0, width: 500, height: 310, color: "#202020", decorative: true },
+      { x: MAX_LEFT + 224, y: 300, width: 600, height: MIN_HEIGHT, color: "#202020", decorative: true },
 
-      { x: MAX_LEFT + 370, y: MIN_HEIGHT - 230, width: 20, height: 90 },
+      { x: MAX_LEFT + 224, y: MIN_HEIGHT - 120, width: 60, height: 300, color: "#787878" },
+      { x: MAX_LEFT + 224, y: MIN_HEIGHT - 520, width: 30, height: 90, color: "#787878" },
+      { x: MAX_LEFT + 224, y: MIN_HEIGHT - 520, width: 90, height: 30, color: "#787878" },
+      { x: MAX_LEFT + 224, y: MAX_HEIGHT, width: 60, height: 60, color: "#787878" },
 
-      { x: MAX_LEFT + 700, y: MIN_HEIGHT - 130, width: 75, height: 30 },
+      { x: MAX_LEFT + 370, y: MIN_HEIGHT - 230, width: 20, height: 90, color: "#787878" },
 
-      { x: MAX_LEFT + 640, y: MIN_HEIGHT - 430, width: 60, height: 30 },
-      { x: MAX_RIGHT - 189, y: MIN_HEIGHT - 300, width: 50, height: 300 },
-      { x: MAX_RIGHT - 286, y: MAX_HEIGHT, width: 70, height: 300 },
-      { x: MAX_RIGHT - 300, y: MAX_HEIGHT, width: 140, height: 30 },
-      { x: MAX_RIGHT - 286, y: MAX_HEIGHT + 299, width: 147, height: 150 },
+      { x: MAX_LEFT + 700, y: MIN_HEIGHT - 130, width: 75, height: 30, color: "#787878" },
+
+      { x: MAX_LEFT + 640, y: MIN_HEIGHT - 430, width: 60, height: 30, color: "#787878" },
+      { x: MAX_RIGHT - 189, y: MIN_HEIGHT - 300, width: 50, height: 300, color: "#787878" },
+      { x: MAX_RIGHT - 286, y: MAX_HEIGHT, width: 70, height: 300, color: "#787878" },
+      { x: MAX_RIGHT - 300, y: MAX_HEIGHT, width: 140, height: 30, color: "#787878" },
+      { x: MAX_RIGHT - 286, y: MAX_HEIGHT + 299, width: 147, height: 150, color: "#787878" },
     ],
     triangles: [],
   },
   level13: {
     ground: { y: MIN_HEIGHT + 100, height: 0 },
     platforms: [
-      { x: MAX_LEFT + 224, y: MIN_HEIGHT - 460, width: 60, height: 500 },
-      { x: MAX_LEFT + 204, y: MIN_HEIGHT - 460, width: 60, height: 30 },
-      { x: MAX_LEFT + 178, y: MAX_HEIGHT, width: 94, height: 30 },
-      { x: MAX_LEFT + 224, y: MAX_HEIGHT, width: 50, height: 110 },
-      { x: MAX_LEFT + 180, y: MAX_HEIGHT, width: 90, height: 30 },
+      { x: MAX_LEFT + 224, y: 0, width: 500, height: MIN_HEIGHT, color: "#202020", decorative: true },
+      { x: MAX_LEFT + 180, y: 0, width: 500, height: 280, color: "#202020", decorative: true },
 
-      { x: MAX_RIGHT - 460, y: MAX_HEIGHT + 240, width: 60, height: 30 },
+      { x: MAX_LEFT + 224, y: MIN_HEIGHT - 460, width: 60, height: 500, color: "#898989" },
+      { x: MAX_LEFT + 204, y: MIN_HEIGHT - 460, width: 60, height: 30, color: "#898989" },
+      { x: MAX_LEFT + 178, y: MAX_HEIGHT, width: 94, height: 30, color: "#898989" },
+      { x: MAX_LEFT + 224, y: MAX_HEIGHT, width: 50, height: 110, color: "#898989" },
+      { x: MAX_LEFT + 180, y: MAX_HEIGHT, width: 90, height: 30, color: "#898989" },
 
-      { x: MAX_RIGHT - 530, y: MAX_HEIGHT + 500, width: 60, height: 30 },
+      { x: MAX_RIGHT - 460, y: MAX_HEIGHT + 240, width: 60, height: 30, color: "#898989" },
 
-      { x: MAX_RIGHT - 286, y: MAX_HEIGHT, width: 70, height: 190 },
-      { x: MAX_RIGHT - 251, y: MAX_HEIGHT + 189, width: 35, height: 150 },
-      { x: MAX_RIGHT - 286, y: MAX_HEIGHT + 338, width: 70, height: 80 },
-      { x: MAX_RIGHT - 305, y: MAX_HEIGHT + 338, width: 85, height: 30 },
-      { x: MAX_RIGHT - 300, y: MIN_HEIGHT - 30, width: 140, height: 30 },
+      { x: MAX_RIGHT - 530, y: MAX_HEIGHT + 500, width: 60, height: 30, color: "#898989" },
+
+      { x: MAX_RIGHT - 286, y: MAX_HEIGHT, width: 70, height: 190, color: "#898989" },
+      { x: MAX_RIGHT - 251, y: MAX_HEIGHT + 189, width: 35, height: 150, color: "#898989" },
+      { x: MAX_RIGHT - 286, y: MAX_HEIGHT + 338, width: 70, height: 80, color: "#898989" },
+      { x: MAX_RIGHT - 305, y: MAX_HEIGHT + 338, width: 85, height: 30, color: "#898989" },
+      { x: MAX_RIGHT - 300, y: MIN_HEIGHT - 30, width: 140, height: 30, color: "#898989" },
     ],
     triangles: [],
   },
   level14: {
     ground: { y: MIN_HEIGHT + 100, height: 0 },
     platforms: [
-      { x: MAX_LEFT + 224, y: MAX_HEIGHT, width: 60, height: 80 },
-      { x: MAX_LEFT + 180, y: MIN_HEIGHT - 30, width: 90, height: 30 },
-      { x: MAX_LEFT + 224, y: MAX_HEIGHT, width: 110, height: 30 },
+      { x: MAX_LEFT + 224, y: 0, width: 500, height: MIN_HEIGHT, color: "#202020", decorative: true },
+      { x: MAX_LEFT + 190, y: MIN_HEIGHT - 200, width: 500, height: MIN_HEIGHT, color: "#202020", decorative: true },
+      { x: MAX_LEFT + 224, y: MAX_HEIGHT, width: 60, height: 80, color: "#a0a0a0" },
+      { x: MAX_LEFT + 180, y: MIN_HEIGHT - 30, width: 90, height: 30, color: "#a0a0a0" },
+      { x: MAX_LEFT + 224, y: MAX_HEIGHT, width: 110, height: 30, color: "#a0a0a0" },
 
-      { x: MAX_RIGHT - 495, y: MAX_HEIGHT + 590, width: 60, height: 30 },
+      { x: MAX_RIGHT - 495, y: MAX_HEIGHT + 590, width: 60, height: 30, color: "#a0a0a0" },
 
-      { x: MAX_RIGHT - 495, y: MAX_HEIGHT + 350, width: 20, height: 80 },
+      { x: MAX_RIGHT - 495, y: MAX_HEIGHT + 350, width: 20, height: 80, color: "#a0a0a0" },
 
-      { x: MAX_LEFT + 325, y: MAX_HEIGHT + 320, width: 60, height: 30 },
+      { x: MAX_LEFT + 325, y: MAX_HEIGHT + 320, width: 60, height: 30, color: "#a0a0a0" },
 
-      { x: MAX_RIGHT - 286, y: MAX_HEIGHT, width: 70, height: 30 },
-      { x: MAX_RIGHT - 286, y: MAX_HEIGHT + 190, width: 70, height: 140 },
-      { x: MAX_RIGHT - 286, y: MAX_HEIGHT + 480, width: 70, height: 240 },
+      { x: MAX_RIGHT - 286, y: MAX_HEIGHT, width: 70, height: 30, color: "#a0a0a0" },
+      { x: MAX_RIGHT - 286, y: MAX_HEIGHT + 190, width: 70, height: 140, color: "#a0a0a0" },
+      { x: MAX_RIGHT - 286, y: MAX_HEIGHT + 480, width: 70, height: 240, color: "#a0a0a0" },
     ],
     triangles: [],
   },
   level15: {
     ground: { y: MIN_HEIGHT + 100, height: 0 },
     platforms: [
-      { x: MAX_LEFT + 224, y: MIN_HEIGHT - 30, width: 110, height: 30 },
-      { x: MAX_LEFT + 224, y: MAX_HEIGHT + 300, width: 450, height: 220 },
+      { x: MAX_LEFT + 224, y: 300, width: 500, height: MIN_HEIGHT, color: "#202020", decorative: true },
 
-      { x: MAX_LEFT + 224, y: MAX_HEIGHT + 300, width: 640, height: 20 },
-      { x: MAX_RIGHT - 115, y: MAX_HEIGHT + 261, width: 20, height: 40 },
+      { x: MAX_LEFT + 100, y: 336, width: 130, height: 30, color: "#202020", decorative: true },
+      { x: MAX_LEFT + 200, y: 336, width: 30, height: 70, color: "#202020", decorative: true },
+      { x: MAX_LEFT + 150, y: 360, width: 80, height: 30, color: "#202020", decorative: true },
 
-      { x: MAX_LEFT + 100, y: MIN_HEIGHT - 70, width: 30, height: 30 },
-      { x: MAX_LEFT + 100, y: MIN_HEIGHT - 280, width: 30, height: 30 },
-      { x: MAX_LEFT + 100, y: MIN_HEIGHT - 380, width: 30, height: 30 },
+      { x: MAX_LEFT + 100, y: 436, width: 130, height: 30, color: "#202020", decorative: true },
+      { x: MAX_LEFT + 200, y: 436, width: 30, height: 70, color: "#202020", decorative: true },
+      { x: MAX_LEFT + 150, y: 460, width: 80, height: 30, color: "#202020", decorative: true },
 
-      { x: MAX_RIGHT - 286, y: MAX_HEIGHT + 300, width: 70, height: 530 },
+      { x: MAX_LEFT + 100, y: 646, width: 130, height: 30, color: "#202020", decorative: true },
+      { x: MAX_LEFT + 200, y: 646, width: 30, height: 70, color: "#202020", decorative: true },
+      { x: MAX_LEFT + 150, y: 670, width: 80, height: 30, color: "#202020", decorative: true },
+
+      { x: MAX_LEFT + 224, y: MIN_HEIGHT - 30, width: 110, height: 30, color: "#c1c1c1" },
+      { x: MAX_LEFT + 224, y: MAX_HEIGHT + 300, width: 450, height: 220, color: "#c1c1c1" },
+
+      { x: MAX_LEFT + 224, y: MAX_HEIGHT + 300, width: 640, height: 20, color: "#c1c1c1" },
+      { x: MAX_RIGHT - 115, y: MAX_HEIGHT + 261, width: 20, height: 40, color: "#c1c1c1" },
+
+      { x: MAX_LEFT + 100, y: MIN_HEIGHT - 70, width: 30, height: 30, color: "#c1c1c1" },
+      { x: MAX_LEFT + 100, y: MIN_HEIGHT - 280, width: 30, height: 30, color: "#c1c1c1" },
+      { x: MAX_LEFT + 100, y: MIN_HEIGHT - 380, width: 30, height: 30, color: "#c1c1c1" },
+
+      { x: MAX_RIGHT - 286, y: MAX_HEIGHT + 300, width: 70, height: 530, color: "#c1c1c1" },
     ],
     triangles: [],
   },
