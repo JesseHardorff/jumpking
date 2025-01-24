@@ -65,7 +65,7 @@ const levels = [
 ];
 
 const gameState = {
-  currentScreen: 5,
+  currentScreen: 9,
   adminMode: true,
   screenTransition: {
     active: false,
@@ -323,6 +323,7 @@ const keyboard = {
   ArrowUp: false,
   ArrowDown: false,
   KeyP: false,
+  Escape: false,
 };
 function checkPlatformCollisions(nextX, nextY) {
   const currentLevel = levels[gameState.currentScreen]; // In checkPlatformCollisions function, update the triangle collision check:

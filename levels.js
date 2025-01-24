@@ -53,17 +53,17 @@ const LEVEL_DATA = {
     platforms: [
       { x: 270, y: MIN_HEIGHT - 79, width: 144, height: 113, color: "#1B4017" },
       { x: 270, y: MIN_HEIGHT - 285, width: 140, height: 30, color: "#3b3834" },
-      { x: 15, y: MIN_HEIGHT - 285, width: 110, height: 30, color: "#67894A" },
+      { x: 15, y: MIN_HEIGHT - 285, width: 110, height: 30, color: "#16271C" },
       { x: 592, y: MIN_HEIGHT - 395, width: 94, height: 140, color: "#3b3834" },
       { x: 270, y: MIN_HEIGHT - 542, width: 76, height: 157, color: "#3b3834" },
       { x: 270, y: MAX_HEIGHT, width: 31, height: 175, color: "#3b3834" },
       { x: 654, y: MIN_HEIGHT - 573, width: 32, height: 179, color: "#3b3834" },
       { x: 654, y: MIN_HEIGHT - 573, width: 142, height: 32, color: "#3b3834" },
       { x: 654, y: MAX_HEIGHT, width: 32, height: 31, color: "#3b3834" },
-      { x: MAX_RIGHT - 95, y: MIN_HEIGHT - 450, width: 80, height: 32, color: "#67894A" },
+      { x: MAX_RIGHT - 95, y: MIN_HEIGHT - 450, width: 80, height: 32, color: "#16271C" },
 
-      { x: MAX_LEFT, y: 0, width: 15, height: MIN_HEIGHT, color: "#67894A" },
-      { x: MAX_RIGHT - 15, y: 0, width: 15, height: MIN_HEIGHT, color: "#67894A" },
+      { x: MAX_LEFT, y: 0, width: 15, height: MIN_HEIGHT, color: "#16271C" },
+      { x: MAX_RIGHT - 15, y: 0, width: 15, height: MIN_HEIGHT, color: "#16271C" },
     ],
   },
   level5: {
@@ -123,7 +123,8 @@ const LEVEL_DATA = {
     triangleOutlineColor: "#D3AECD",
     ground: { y: MIN_HEIGHT + 100, height: 0 },
     platforms: [
-      { x: MAX_LEFT + 365, y: 0, width: 220, height: 508, color: "#222B2C", decorative: true },
+      { x: MAX_LEFT + 365, y: 0, width: 220, height: 808, color: "#222B2C", decorative: true },
+      { x: MAX_LEFT + 565, y: MAX_HEIGHT, width: 220, height: 230, color: "#222B2C", decorative: true },
       { x: MAX_LEFT + 165, y: 510, width: 220, height: 220, color: "#222B2C", decorative: true },
 
       { x: MAX_RIGHT - 220, y: MIN_HEIGHT - 30, width: 110, height: 30, color: "#193C3A" },
@@ -197,6 +198,9 @@ const LEVEL_DATA = {
     triangleOutlineColor: "#D3AECD",
     ground: { y: MIN_HEIGHT + 100, height: 0 }, // Ground hidden below view
     platforms: [
+      { x: MAX_LEFT + 482, y: MAX_HEIGHT, width: 393, height: 830, color: "#222B2C", decorative: true },
+      { x: MAX_LEFT + 410, y: MAX_HEIGHT, width: 393, height: 100, color: "#222B2C", decorative: true },
+
       { x: MAX_RIGHT - 92, y: MIN_HEIGHT - 270, width: 77, height: 270, color: "#193C3A" },
       { x: MAX_RIGHT - 190, y: MIN_HEIGHT - 77, width: 100, height: 77, color: "#193C3A" },
 
@@ -221,7 +225,7 @@ const LEVEL_DATA = {
     triangles: [
       {
         x1: 867,
-        y1: MIN_HEIGHT - 175, // Start point
+        y1: MIN_HEIGHT - 155, // Start point
         x2: 768,
         y2: MIN_HEIGHT - 77, // End point
         x3: 867,
@@ -230,7 +234,7 @@ const LEVEL_DATA = {
       },
       {
         x1: 494,
-        y1: MIN_HEIGHT - 175, // Start point
+        y1: MIN_HEIGHT - 155, // Start point
         x2: 590,
         y2: MIN_HEIGHT - 82, // End point
         x3: 494,
@@ -256,6 +260,12 @@ const LEVEL_DATA = {
     triangleOutlineColor: "#D3AECD",
     ground: { y: MIN_HEIGHT + 100, height: 0 }, // Ground hidden below view
     platforms: [
+      { x: MAX_LEFT + 420, y: MAX_HEIGHT, width: 525, height: 750, color: "#222B2C", decorative: true },
+
+      { x: MAX_LEFT + 205, y: MAX_HEIGHT, width: 100, height: 200, color: "#222B2C", decorative: true },
+      { x: MAX_LEFT + 255, y: MAX_HEIGHT + 100, width: 100, height: 400, color: "#222B2C", decorative: true },
+      { x: MAX_LEFT + 255, y: MAX_HEIGHT + 300, width: 200, height: 400, color: "#222B2C", decorative: true },
+
       { x: MAX_LEFT + 15, y: MAX_HEIGHT, width: 190, height: 35, color: "#193C3A" },
 
       { x: MAX_LEFT + 305, y: MAX_HEIGHT, width: 140, height: 35, color: "#193C3A" },
@@ -311,6 +321,10 @@ const LEVEL_DATA = {
     triangleOutlineColor: "#D3AECD",
     ground: { y: MIN_HEIGHT + 100, height: 0 },
     platforms: [
+      { x: MAX_LEFT + 110, y: MAX_HEIGHT + 580, width: 200, height: 400, color: "#222B2C", decorative: true },
+
+      { x: MAX_LEFT + 440, y: MAX_HEIGHT + 480, width: 350, height: 400, color: "#222B2C", decorative: true },
+
       { x: MAX_RIGHT - 175, y: MIN_HEIGHT - 65, width: 200, height: 130, color: "#193C3A" },
 
       { x: MAX_RIGHT - 650, y: MIN_HEIGHT - 165, width: 135, height: 170, color: "#193C3A" },
