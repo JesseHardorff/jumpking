@@ -66,7 +66,7 @@ const levels = [
 
 const gameState = {
   currentScreen: 9,
-  adminMode: true,
+  adminMode: false,
   startTime: null,
   elapsedTime: 0,
   lastTime: null,
@@ -302,6 +302,12 @@ const audioManager = {
 
     const newTrack = this.getTrackForLevel(levelNum);
 
+    // If current track is the same type as new track, don't restart it
+    if (this.currentTrack === this.episch && newTrack === this.episch) {
+      return;
+    }
+
+    // Stop current track(s)
     if (this.currentTrack) {
       if (Array.isArray(this.currentTrack)) {
         this.currentTrack.forEach((track) => {
@@ -324,7 +330,7 @@ const audioManager = {
       newTrack.loop = true;
       newTrack.play();
     }
-  }, // Remove comma here
+  },
 }; // Close audioManager object
 
 const keyboard = {
@@ -438,7 +444,7 @@ function checkPlatformCollisions(nextX, nextY) {
   return { x: nextX, y: nextY };
 }
 function updateTimer() {
-  if (!gameState.isPaused && gameState.startTime) {
+  if (!gameState.isPaused && gameState.startTime && !showingConfirmation) {
     const now = Date.now();
     if (gameState.lastTime) {
       gameState.elapsedTime += now - gameState.lastTime;
@@ -539,6 +545,7 @@ function updateAnimation() {
 // Add event listener for when tab/window closes
 window.addEventListener("visibilitychange", () => {
   if (document.hidden) {
+    gameState.isPaused = true;
     const gameStateToSave = {
       screen: gameState.currentScreen,
       position: { x: blok.x, y: blok.y },
@@ -549,16 +556,16 @@ window.addEventListener("visibilitychange", () => {
       },
     };
     localStorage.setItem("jumpKingState", JSON.stringify(gameStateToSave));
-
-    // Pause music and go to settings
-    if (audioManager.currentTrack) {
-      if (Array.isArray(audioManager.currentTrack)) {
-        audioManager.currentTrack.forEach((track) => track.pause());
-      } else {
-        audioManager.currentTrack.pause();
-      }
+  } else {
+    // When returning to tab, update lastTime to prevent time counting while away
+    gameState.lastTime = Date.now();
+  }
+  if (audioManager.currentTrack) {
+    if (Array.isArray(audioManager.currentTrack)) {
+      audioManager.currentTrack.forEach((track) => track.pause());
+    } else {
+      audioManager.currentTrack.pause();
     }
-    gameState.isPaused = true;
   }
 });
 
@@ -806,6 +813,14 @@ function drawScreen(screenIndex, offset) {
   if (backgroundImages[screenIndex + 1]) {
     ctx.drawImage(backgroundImages[screenIndex + 1], 0, -offset, TARGET_WIDTH, TARGET_HEIGHT);
   }
+  if (screenIndex === 14) {
+    // Index 14 is level 15 since arrays start at 0
+    const customImage = new Image();
+    customImage.src = "crown.png";
+
+    // Parameters: image, x, y, width, height
+    ctx.drawImage(customImage, 710, 250, 100, 100); // Adjust these numbers for position and size
+  }
 
   // Draw ground
   ctx.fillStyle = GROUND_COLOR;
@@ -868,6 +883,7 @@ window.addEventListener("keydown", (e) => {
       gameState.lastTime = Date.now();
     }
   }
+
   if (!gameState.adminMode) {
     if (!blok.opGrond) return;
     if (e.code === "Space" && !blok.isChargingJump) {
