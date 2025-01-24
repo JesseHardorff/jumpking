@@ -69,8 +69,14 @@ const gameState = {
   adminMode: false,
   startTime: null,
   elapsedTime: 0,
+  showCrownSprite: false,
+  hasCrown: false,
   lastTime: null,
   isPaused: true,
+  hasWon: false,
+  fadeAlpha: 0,
+  isPlayingVictoryAnimation: false,
+  showStats: false,
   screenTransition: {
     active: false,
     offset: 0,
@@ -106,6 +112,18 @@ const spriteSheet = {
       frameTimer: 0,
       reverse: false,
     },
+    dancing: {
+      frames: [
+        { x: 274, y: 115 },
+        { x: 323, y: 115 },
+        { x: 370, y: 115 },
+        { x: 323, y: 115 },
+      ],
+      frameDurations: [600, 600, 600, 600],
+      currentFrame: 0,
+      frameTimer: 0,
+      reverse: false,
+    },
     jumpUp: {
       x: 278,
       y: 58,
@@ -130,6 +148,61 @@ const spriteSheet = {
   currentAnimation: "idle",
 };
 spriteSheet.image.src = "spritesheet.png";
+
+const crownSprite = {
+  image: new Image(),
+  frameWidth: 32,
+  frameHeight: 32,
+  facingRight: true,
+  animations: {
+    idle: {
+      x: 230,
+      y: 18,
+      frames: 1,
+    },
+    charging: {
+      x: 232,
+      y: 66,
+      frames: 1,
+    },
+    walking: {
+      frames: [
+        { x: 274, y: 18 },
+        { x: 323, y: 18 },
+        { x: 370, y: 18 },
+        { x: 323, y: 18 },
+      ],
+      frameDurations: [400, 200, 400, 200],
+      currentFrame: 0,
+      frameTimer: 0,
+      reverse: false,
+    },
+    jumpUp: {
+      x: 278,
+      y: 58,
+      frames: 1,
+    },
+    jumpDown: {
+      x: 330,
+      y: 58,
+      frames: 1,
+    },
+    knocked: {
+      x: 376,
+      y: 66,
+      frames: 1,
+    },
+    bump: {
+      x: 232,
+      y: 114,
+      frames: 1,
+    },
+  },
+  currentAnimation: "idle",
+};
+
+crownSprite.image.src = "./crown-spritesheet.png";
+
 function drawCharacter() {
   const animation = spriteSheet.animations[spriteSheet.currentAnimation];
 
@@ -177,7 +250,21 @@ function drawCharacter() {
     displayWidth,
     displayHeight
   );
-  ctx.restore();
+
+  // Draw crown spritesheet on top if enabled
+  if (gameState.showCrownSprite) {
+    ctx.drawImage(
+      crownSprite.image,
+      sourceX,
+      sourceY,
+      frameWidth,
+      frameHeight,
+      blok.x + xOffset,
+      blok.y + yOffset,
+      displayWidth,
+      displayHeight
+    );
+  }
 }
 
 const blok = {
@@ -343,6 +430,10 @@ const keyboard = {
   Escape: false,
 };
 function checkPlatformCollisions(nextX, nextY) {
+  if (gameState.isPlayingVictoryAnimation) {
+    return { x: nextX, y: nextY };
+  }
+
   const currentLevel = levels[gameState.currentScreen]; // In checkPlatformCollisions function, update the triangle collision check:
 
   if (currentLevel.triangles) {
@@ -463,11 +554,15 @@ function drawTimer() {
     .toString()
     .padStart(2, "0")}`;
 
+  ctx.save();
+  ctx.setTransform(1, 0, 0, 1, 0, 0);
   ctx.font = "30px Arial";
   ctx.fillStyle = "white";
   ctx.textAlign = "left";
   ctx.fillText(timeString, 10, 40);
+  ctx.restore();
 }
+
 function updateJumpCharge() {
   if (blok.isChargingJump) {
     spriteSheet.currentAnimation = "charging";
@@ -600,6 +695,42 @@ function spelLus() {
   updateAnimation();
   drawCharacter();
   drawTimer();
+
+  if (gameState.hasWon) {
+    // Fade to black
+    ctx.fillStyle = `rgba(0, 0, 0, ${gameState.fadeAlpha})`;
+    ctx.fillRect(0, 0, TARGET_WIDTH, TARGET_HEIGHT);
+
+    if (gameState.fadeAlpha < 1) {
+      gameState.fadeAlpha += 0.02;
+    } else {
+      gameState.showStats = true;
+    }
+
+    if (gameState.showStats) {
+      // Draw stats screen
+      ctx.font = "48px Arial";
+      ctx.fillStyle = "white";
+      ctx.textAlign = "center";
+      ctx.fillText("Congratulations! You Got the Crown!", TARGET_WIDTH / 2, TARGET_HEIGHT / 3);
+
+      // Show time
+      const totalSeconds = Math.floor(gameState.elapsedTime / 1000);
+      const hours = Math.floor(totalSeconds / 3600);
+      const minutes = Math.floor((totalSeconds % 3600) / 60);
+      const seconds = totalSeconds % 60;
+      const timeString = `Time: ${hours}:${minutes}:${seconds}`;
+      ctx.fillText(timeString, TARGET_WIDTH / 2, TARGET_HEIGHT / 2);
+
+      // Draw restart button
+      ctx.fillStyle = "#3D283A";
+      ctx.fillRect(TARGET_WIDTH / 2 - 100, (TARGET_HEIGHT * 2) / 3 - 25, 200, 50);
+      ctx.fillStyle = "white";
+      ctx.font = "24px Arial";
+      ctx.fillText("Start Over", TARGET_WIDTH / 2, (TARGET_HEIGHT * 2) / 3 + 10);
+    }
+  }
+
   // Only draw menu if we're actually paused
   if (gameState.isPaused) {
     drawMenu();
@@ -611,195 +742,269 @@ function spelLus() {
   }
   requestAnimationFrame(spelLus);
 }
+canvas.addEventListener("click", (e) => {
+  if (gameState.showStats) {
+    const rect = canvas.getBoundingClientRect();
+    const x = (e.clientX - rect.left) * (TARGET_WIDTH / canvas.width);
+    const y = (e.clientY - rect.top) * (TARGET_HEIGHT / canvas.height);
+
+    if (
+      x >= TARGET_WIDTH / 2 - 100 &&
+      x <= TARGET_WIDTH / 2 + 100 &&
+      y >= (TARGET_HEIGHT * 2) / 3 - 25 &&
+      y <= (TARGET_HEIGHT * 2) / 3 + 25
+    ) {
+      // Reset everything
+      resetGame();
+      gameState.hasWon = false;
+      gameState.fadeAlpha = 0;
+      gameState.showStats = false;
+      spriteSheet.image.src = "spritesheet.png";
+    }
+  }
+});
 
 function updateBlok() {
-  const currentLevel = levels[gameState.currentScreen];
-  const isOnTriangle =
-    currentLevel.triangles &&
-    currentLevel.triangles.some((triangle) => {
-      const playerBottom = {
-        x: blok.x + blok.breedte / 2,
-        y: blok.y + blok.hoogte,
-      };
-      const inXBounds =
-        triangle.direction === "right"
-          ? blok.x + blok.breedte >= triangle.x1 && blok.x <= triangle.x2
-          : blok.x + blok.breedte >= triangle.x2 && blok.x <= triangle.x1;
+  if (!gameState.isPlayingVictoryAnimation || gameState.adminMode) {
+    const currentLevel = levels[gameState.currentScreen];
+    const isOnTriangle =
+      currentLevel.triangles &&
+      currentLevel.triangles.some((triangle) => {
+        const playerBottom = {
+          x: blok.x + blok.breedte / 2,
+          y: blok.y + blok.hoogte,
+        };
+        const inXBounds =
+          triangle.direction === "right"
+            ? blok.x + blok.breedte >= triangle.x1 && blok.x <= triangle.x2
+            : blok.x + blok.breedte >= triangle.x2 && blok.x <= triangle.x1;
 
-      if (!inXBounds) return false;
+        if (!inXBounds) return false;
 
-      const slope =
-        triangle.direction === "right"
-          ? (triangle.y2 - triangle.y1) / (triangle.x2 - triangle.x1)
-          : (triangle.y1 - triangle.y2) / (triangle.x1 - triangle.x2);
+        const slope =
+          triangle.direction === "right"
+            ? (triangle.y2 - triangle.y1) / (triangle.x2 - triangle.x1)
+            : (triangle.y1 - triangle.y2) / (triangle.x1 - triangle.x2);
 
-      const expectedY = triangle.y1 + slope * (playerBottom.x - triangle.x1);
-      return Math.abs(playerBottom.y - expectedY) < 4;
-    });
+        const expectedY = triangle.y1 + slope * (playerBottom.x - triangle.x1);
+        return Math.abs(playerBottom.y - expectedY) < 4;
+      });
 
-  if (gameState.adminMode) {
-    const flySpeed = 5;
-    if (keyboard.ArrowLeft) blok.x -= flySpeed;
-    if (keyboard.ArrowRight) blok.x += flySpeed;
-    if (keyboard.ArrowUp) {
-      blok.y -= flySpeed;
-      if (blok.y + blok.hoogte < 0 && gameState.currentScreen < levels.length - 1) {
-        blok.y = TARGET_HEIGHT + blok.y;
-        gameState.currentScreen++;
+    if (gameState.adminMode) {
+      const flySpeed = 5;
+      if (keyboard.ArrowLeft) blok.x -= flySpeed;
+      if (keyboard.ArrowRight) blok.x += flySpeed;
+      if (keyboard.ArrowUp) {
+        blok.y -= flySpeed;
+        if (blok.y + blok.hoogte < 0 && gameState.currentScreen < levels.length - 1) {
+          blok.y = TARGET_HEIGHT + blok.y;
+          gameState.currentScreen++;
+        }
+      }
+      if (keyboard.ArrowDown) {
+        blok.y += flySpeed;
+        if (blok.y > TARGET_HEIGHT && gameState.currentScreen > 0) {
+          blok.y = blok.y - TARGET_HEIGHT;
+          gameState.currentScreen--;
+        }
+      }
+      return;
+    }
+
+    if (gameState.isPlayingVictoryAnimation) {
+      return;
+    }
+    if (isOnTriangle) {
+      keyboard.ArrowLeft = false;
+      keyboard.ArrowRight = false;
+      keyboard.Space = false;
+      blok.isChargingJump = false;
+      blok.isWalking = false; // Get the current triangle
+
+      const triangle = currentLevel.triangles.find((t) => {
+        const playerBottom = {
+          x: blok.x + blok.breedte / 2,
+          y: blok.y + blok.hoogte,
+        };
+        return playerBottom.x >= t.x1 && playerBottom.x <= t.x2;
+      });
+
+      if (triangle) {
+        const slope = (triangle.y2 - triangle.y1) / (triangle.x2 - triangle.x1);
+        const directionMultiplier = triangle.direction === "right" ? 1 : -1;
+        blok.snelheidX += 0.1 * directionMultiplier;
+        blok.snelheidX = Math.max(-3, Math.min(blok.snelheidX, 3));
+        blok.snelheidY = Math.abs(slope * blok.snelheidX);
+      }
+    } // Platform edge detection
+
+    if (blok.opGrond) {
+      let isOnPlatform = false;
+      for (const platform of currentLevel.platforms) {
+        if (
+          blok.x + blok.breedte > platform.x &&
+          blok.x < platform.x + platform.width &&
+          Math.abs(blok.y + blok.hoogte - platform.y) < 2
+        ) {
+          isOnPlatform = true;
+          break;
+        }
+      }
+
+      const isOnGround =
+        gameState.currentScreen === 0 && Math.abs(blok.y + blok.hoogte - (TARGET_HEIGHT - GROUND_HEIGHT)) < 2;
+
+      if (!isOnPlatform && !isOnGround && !isOnTriangle) {
+        blok.opGrond = false;
+        blok.snelheidY = 0.1;
+        if (keyboard.ArrowLeft) {
+          blok.snelheidX = -1.33;
+        } else if (keyboard.ArrowRight) {
+          blok.snelheidX = 1.33;
+        }
       }
     }
-    if (keyboard.ArrowDown) {
-      blok.y += flySpeed;
-      if (blok.y > TARGET_HEIGHT && gameState.currentScreen > 0) {
-        blok.y = blok.y - TARGET_HEIGHT;
-        gameState.currentScreen--;
+
+    updateJumpCharge();
+
+    // Add crown collision detection in updateBlok
+
+    if (blok.isChargingJump) {
+      spriteSheet.currentAnimation = "charging";
+    }
+    if (!blok.opGrond) {
+      if (blok.hasCollided && !isOnTriangle) {
+        spriteSheet.currentAnimation = "bump";
+      } else if (blok.snelheidY < 0) {
+        spriteSheet.currentAnimation = "jumpUp";
+      } else {
+        spriteSheet.currentAnimation = "jumpDown";
       }
+      blok.fallDistance += blok.snelheidY;
+      blok.snelheidY += blok.zwaartekracht;
+    } else {
+      blok.hasCollided = false;
     }
-    return;
-  }
 
-  if (isOnTriangle) {
-    keyboard.ArrowLeft = false;
-    keyboard.ArrowRight = false;
-    keyboard.Space = false;
-    blok.isChargingJump = false;
-    blok.isWalking = false; // Get the current triangle
-
-    const triangle = currentLevel.triangles.find((t) => {
-      const playerBottom = {
-        x: blok.x + blok.breedte / 2,
-        y: blok.y + blok.hoogte,
-      };
-      return playerBottom.x >= t.x1 && playerBottom.x <= t.x2;
-    });
-
-    if (triangle) {
-      const slope = (triangle.y2 - triangle.y1) / (triangle.x2 - triangle.x1);
-      const directionMultiplier = triangle.direction === "right" ? 1 : -1;
-      blok.snelheidX += 0.1 * directionMultiplier;
-      blok.snelheidX = Math.max(-3, Math.min(blok.snelheidX, 3));
-      blok.snelheidY = Math.abs(slope * blok.snelheidX);
-    }
-  } // Platform edge detection
-
-  if (blok.opGrond) {
-    let isOnPlatform = false;
-    for (const platform of currentLevel.platforms) {
-      if (
-        blok.x + blok.breedte > platform.x &&
-        blok.x < platform.x + platform.width &&
-        Math.abs(blok.y + blok.hoogte - platform.y) < 2
-      ) {
-        isOnPlatform = true;
-        break;
+    if (blok.isStunned) {
+      spriteSheet.currentAnimation = "knocked";
+      blok.snelheidX = 0;
+      blok.snelheidY = 0;
+      if (Date.now() - blok.stunTimer >= blok.stunDuration) {
+        blok.isStunned = false;
+        spriteSheet.currentAnimation = "idle";
       }
+      return;
+    } else {
+      blok.kleur = blok.normalColor;
     }
 
-    const isOnGround =
-      gameState.currentScreen === 0 && Math.abs(blok.y + blok.hoogte - (TARGET_HEIGHT - GROUND_HEIGHT)) < 2;
-
-    if (!isOnPlatform && !isOnGround && !isOnTriangle) {
-      blok.opGrond = false;
-      blok.snelheidY = 0.1;
+    if (blok.opGrond && !blok.isChargingJump && !isOnTriangle) {
+      let nextPosition = blok.x;
       if (keyboard.ArrowLeft) {
-        blok.snelheidX = -1.33;
+        nextPosition = blok.x - blok.walkSpeed;
+        blok.jumpDirection = -1;
+        spriteSheet.currentAnimation = "walking";
+        spriteSheet.facingRight = false;
       } else if (keyboard.ArrowRight) {
-        blok.snelheidX = 1.33;
+        nextPosition = blok.x + blok.walkSpeed;
+        blok.jumpDirection = 1;
+        spriteSheet.currentAnimation = "walking";
+        spriteSheet.facingRight = true;
+      } else {
+        spriteSheet.currentAnimation = "idle";
+      }
+      blok.x = nextPosition;
+    }
+
+    let nextX = blok.x + blok.snelheidX;
+    let nextY = blok.y + blok.snelheidY;
+
+    const collision = checkPlatformCollisions(nextX, nextY);
+    nextX = collision.x;
+    nextY = collision.y;
+
+    if (nextX < 0) {
+      nextX = 0;
+      blok.snelheidX = 0;
+    }
+    if (nextX + blok.breedte > TARGET_WIDTH) {
+      nextX = TARGET_WIDTH - blok.breedte;
+      blok.snelheidX = 0;
+    }
+
+    if (nextY + blok.hoogte < 0 && gameState.currentScreen < levels.length - 1) {
+      gameState.screenTransition.active = true;
+      gameState.screenTransition.targetOffset = TARGET_HEIGHT;
+      nextY = TARGET_HEIGHT + nextY;
+      gameState.currentScreen++;
+      audioManager.playTrackForLevel(gameState.currentScreen + 1);
+    }
+
+    if (nextY > TARGET_HEIGHT && gameState.currentScreen > 0) {
+      gameState.screenTransition.active = true;
+      gameState.screenTransition.targetOffset = -TARGET_HEIGHT;
+      nextY = nextY - TARGET_HEIGHT;
+      gameState.currentScreen--;
+      audioManager.playTrackForLevel(gameState.currentScreen + 1);
+    }
+
+    if (gameState.currentScreen === 0 && nextY + blok.hoogte > TARGET_HEIGHT - GROUND_HEIGHT) {
+      nextY = TARGET_HEIGHT - GROUND_HEIGHT - blok.hoogte;
+      blok.snelheidY = 0;
+      blok.snelheidX = 0;
+      blok.opGrond = true;
+    }
+    // Right before blok.x = nextX and blok.y = nextY
+    if (gameState.currentScreen === 14) {
+      // Level 15
+      // Draw collision box for debugging
+      ctx.strokeStyle = "red";
+      ctx.strokeRect(710, 240, 50, 20);
+
+      // More generous collision detection
+      if (nextX + blok.breedte > 710 && nextX < 760 && nextY + blok.hoogte > 240 && nextY < 260) {
+        gameState.hasCrown = true;
+        gameState.showCrownSprite = true;
+
+        if (gameState.hasCrown && blok.opGrond && !gameState.isPlayingVictoryAnimation) {
+          console.log("Starting victory sequence");
+          gameState.isPlayingVictoryAnimation = true;
+          spriteSheet.currentAnimation = "dancing";
+
+          setTimeout(() => {
+            console.log("Starting charge");
+            spriteSheet.currentAnimation = "charging";
+
+            setTimeout(() => {
+              console.log("Executing jump");
+              gameState.isPlayingVictoryAnimation = false;
+
+              // Use actual full charge jump values
+              blok.springKracht = blok.maxJumpForce;
+              blok.snelheidY = -blok.maxJumpForce * 1.3;
+              blok.snelheidX = blok.maxHorizontalForce;
+              blok.opGrond = false;
+              spriteSheet.facingRight = true;
+
+              checkPlatformCollisions = () => ({ x: blok.x + blok.snelheidX, y: blok.y + blok.snelheidY });
+
+              setTimeout(() => {
+                gameState.hasWon = true;
+              }, 100);
+            }, 2000);
+          }, 2400);
+        }
       }
     }
-  }
 
-  updateJumpCharge();
-
-  if (blok.isChargingJump) {
-    spriteSheet.currentAnimation = "charging";
-  }
-  if (!blok.opGrond) {
-    if (blok.hasCollided && !isOnTriangle) {
-      spriteSheet.currentAnimation = "bump";
-    } else if (blok.snelheidY < 0) {
-      spriteSheet.currentAnimation = "jumpUp";
-    } else {
-      spriteSheet.currentAnimation = "jumpDown";
-    }
-    blok.fallDistance += blok.snelheidY;
-    blok.snelheidY += blok.zwaartekracht;
+    blok.x = nextX;
+    blok.y = nextY;
   } else {
-    blok.hasCollided = false;
+    // Only victory animation movement
+    blok.x += blok.snelheidX;
+    blok.y += blok.snelheidY;
   }
-
-  if (blok.isStunned) {
-    spriteSheet.currentAnimation = "knocked";
-    blok.snelheidX = 0;
-    blok.snelheidY = 0;
-    if (Date.now() - blok.stunTimer >= blok.stunDuration) {
-      blok.isStunned = false;
-      spriteSheet.currentAnimation = "idle";
-    }
-    return;
-  } else {
-    blok.kleur = blok.normalColor;
-  }
-
-  if (blok.opGrond && !blok.isChargingJump && !isOnTriangle) {
-    let nextPosition = blok.x;
-    if (keyboard.ArrowLeft) {
-      nextPosition = blok.x - blok.walkSpeed;
-      blok.jumpDirection = -1;
-      spriteSheet.currentAnimation = "walking";
-      spriteSheet.facingRight = false;
-    } else if (keyboard.ArrowRight) {
-      nextPosition = blok.x + blok.walkSpeed;
-      blok.jumpDirection = 1;
-      spriteSheet.currentAnimation = "walking";
-      spriteSheet.facingRight = true;
-    } else {
-      spriteSheet.currentAnimation = "idle";
-    }
-    blok.x = nextPosition;
-  }
-
-  let nextX = blok.x + blok.snelheidX;
-  let nextY = blok.y + blok.snelheidY;
-
-  const collision = checkPlatformCollisions(nextX, nextY);
-  nextX = collision.x;
-  nextY = collision.y;
-
-  if (nextX < 0) {
-    nextX = 0;
-    blok.snelheidX = 0;
-  }
-  if (nextX + blok.breedte > TARGET_WIDTH) {
-    nextX = TARGET_WIDTH - blok.breedte;
-    blok.snelheidX = 0;
-  }
-
-  if (nextY + blok.hoogte < 0 && gameState.currentScreen < levels.length - 1) {
-    gameState.screenTransition.active = true;
-    gameState.screenTransition.targetOffset = TARGET_HEIGHT;
-    nextY = TARGET_HEIGHT + nextY;
-    gameState.currentScreen++;
-    audioManager.playTrackForLevel(gameState.currentScreen + 1);
-  }
-
-  if (nextY > TARGET_HEIGHT && gameState.currentScreen > 0) {
-    gameState.screenTransition.active = true;
-    gameState.screenTransition.targetOffset = -TARGET_HEIGHT;
-    nextY = nextY - TARGET_HEIGHT;
-    gameState.currentScreen--;
-    audioManager.playTrackForLevel(gameState.currentScreen + 1);
-  }
-
-  if (gameState.currentScreen === 0 && nextY + blok.hoogte > TARGET_HEIGHT - GROUND_HEIGHT) {
-    nextY = TARGET_HEIGHT - GROUND_HEIGHT - blok.hoogte;
-    blok.snelheidY = 0;
-    blok.snelheidX = 0;
-    blok.opGrond = true;
-  }
-
-  blok.x = nextX;
-  blok.y = nextY;
 }
 
 function drawScreen(screenIndex, offset) {
@@ -896,6 +1101,13 @@ window.addEventListener("keydown", (e) => {
 let showingConfirmation = false;
 
 function drawMenu() {
+  ctx.save();
+  ctx.setTransform(1, 0, 0, 1, 0, 0);
+
+  const scaleX = canvas.width / TARGET_WIDTH;
+  const scaleY = canvas.height / TARGET_HEIGHT;
+  ctx.scale(scaleX, scaleY);
+
   ctx.fillStyle = "rgba(0, 0, 0, 0.7)";
   ctx.fillRect(0, 0, TARGET_WIDTH, TARGET_HEIGHT);
 
@@ -914,6 +1126,8 @@ function drawMenu() {
     ctx.fillStyle = "white";
     ctx.fillText(button.text, TARGET_WIDTH / 2, button.y + 10);
   });
+
+  ctx.restore();
 }
 
 canvas.addEventListener("click", (e) => {
