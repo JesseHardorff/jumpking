@@ -67,6 +67,10 @@ const levels = [
 const gameState = {
   currentScreen: 9,
   adminMode: true,
+  startTime: null,
+  elapsedTime: 0,
+  lastTime: null,
+  isPaused: true,
   screenTransition: {
     active: false,
     offset: 0,
@@ -217,7 +221,8 @@ const audioManager = {
   episch: new Audio("sound/bg-music/episch.mp3"),
   sunrise: new Audio("sound/bg-music/sunrise.mp3"),
   wind: new Audio("sound/bg-music/wind.wav"),
-  currentTrack: null, // Sound effects
+  currentTrack: null,
+  isSoundEnabled: true,
 
   sfx: {
     splat: new Audio("sound/movement/king_splat.wav"),
@@ -227,8 +232,11 @@ const audioManager = {
   },
   lastBumpTime: 0,
   bumpCooldown: 150,
+
   playSfx(soundName) {
-    const sound = this.sfx[soundName]; // Add special handling for bump sound
+    if (!this.isSoundEnabled) return;
+
+    const sound = this.sfx[soundName];
     if (soundName === "bump") {
       const now = Date.now();
       if (now - this.lastBumpTime < this.bumpCooldown) {
@@ -241,80 +249,83 @@ const audioManager = {
     clone.play();
   },
 
+  toggleSound() {
+    this.isSoundEnabled = !this.isSoundEnabled;
+
+    if (this.isSoundEnabled) {
+      this.playTrackForLevel(gameState.currentScreen + 1);
+    } else {
+      if (Array.isArray(this.currentTrack)) {
+        this.currentTrack.forEach((track) => track.pause());
+      } else if (this.currentTrack) {
+        this.currentTrack.pause();
+      }
+      this.currentTrack = null;
+    }
+  },
+
   getTrackForLevel(levelNum) {
-    if (levelNum === 15) {
-      return this.wind;
+    if (levelNum <= 5) {
+      this.cricket.volume = 1.0;
+      return [this.cricket];
     } else if (levelNum === 6) {
       this.cricket.volume = 0.7;
       this.riool.volume = 0.3;
       return [this.cricket, this.riool];
-    } else if (levelNum <= 6) {
-      return this.cricket;
     } else if (levelNum <= 10) {
       return this.riool;
+    } else if (levelNum === 15) {
+      return this.wind;
+    } else {
+      return this.episch;
+    }
+  },
+  getTrackForLevel(levelNum) {
+    if (levelNum <= 5) {
+      this.cricket.volume = 1.0;
+      return [this.cricket];
+    } else if (levelNum === 6) {
+      this.cricket.volume = 0.7;
+      this.riool.volume = 0.3;
+      return [this.cricket, this.riool];
+    } else if (levelNum <= 10) {
+      return this.riool;
+    } else if (levelNum === 15) {
+      return this.wind;
     } else {
       return this.episch;
     }
   },
 
   playTrackForLevel(levelNum) {
+    if (!this.isSoundEnabled) return;
+
     const newTrack = this.getTrackForLevel(levelNum);
 
-    if (Array.isArray(newTrack)) {
-      // Handle multiple tracks for level 6
-      if (this.currentTrack) {
-        if (Array.isArray(this.currentTrack)) {
-          this.currentTrack.forEach((track) => {
-            track.pause();
-            track.currentTime = 0;
-          });
-        } else {
-          this.currentTrack.pause();
-          this.currentTrack.currentTime = 0;
-        }
+    if (this.currentTrack) {
+      if (Array.isArray(this.currentTrack)) {
+        this.currentTrack.forEach((track) => {
+          track.pause();
+          track.currentTime = 0;
+        });
+      } else {
+        this.currentTrack.pause();
+        this.currentTrack.currentTime = 0;
       }
-      this.currentTrack = newTrack;
+    }
+
+    this.currentTrack = newTrack;
+    if (Array.isArray(newTrack)) {
       newTrack.forEach((track) => {
         track.loop = true;
         track.play();
       });
     } else {
-      // Normal single track handling
-      if (this.currentTrack !== newTrack) {
-        if (this.currentTrack) {
-          if (Array.isArray(this.currentTrack)) {
-            this.currentTrack.forEach((track) => {
-              track.pause();
-              track.currentTime = 0;
-            });
-          } else {
-            this.currentTrack.pause();
-            this.currentTrack.currentTime = 0;
-          }
-        }
-
-        this.currentTrack = newTrack;
-
-        if (levelNum === 15) {
-          this.currentTrack.loop = false;
-          this.currentTrack.addEventListener(
-            "ended",
-            () => {
-              this.currentTrack = this.wind;
-              this.wind.loop = true;
-              this.wind.play();
-            },
-            { once: true }
-          );
-        } else {
-          this.currentTrack.loop = true;
-        }
-
-        this.currentTrack.play();
-      }
+      newTrack.loop = true;
+      newTrack.play();
     }
-  },
-};
+  }, // Remove comma here
+}; // Close audioManager object
 
 const keyboard = {
   ArrowLeft: false,
@@ -426,7 +437,31 @@ function checkPlatformCollisions(nextX, nextY) {
 
   return { x: nextX, y: nextY };
 }
+function updateTimer() {
+  if (!gameState.isPaused && gameState.startTime) {
+    const now = Date.now();
+    if (gameState.lastTime) {
+      gameState.elapsedTime += now - gameState.lastTime;
+    }
+    gameState.lastTime = now;
+  }
+}
 
+function drawTimer() {
+  const totalSeconds = Math.floor(gameState.elapsedTime / 1000);
+  const hours = Math.floor(totalSeconds / 3600);
+  const minutes = Math.floor((totalSeconds % 3600) / 60);
+  const seconds = totalSeconds % 60;
+
+  const timeString = `${hours.toString().padStart(2, "0")}:${minutes.toString().padStart(2, "0")}:${seconds
+    .toString()
+    .padStart(2, "0")}`;
+
+  ctx.font = "30px Arial";
+  ctx.fillStyle = "white";
+  ctx.textAlign = "left";
+  ctx.fillText(timeString, 10, 40);
+}
 function updateJumpCharge() {
   if (blok.isChargingJump) {
     spriteSheet.currentAnimation = "charging";
@@ -501,20 +536,72 @@ function updateAnimation() {
   }
 }
 
+// Add event listener for when tab/window closes
+window.addEventListener("visibilitychange", () => {
+  if (document.hidden) {
+    const gameStateToSave = {
+      screen: gameState.currentScreen,
+      position: { x: blok.x, y: blok.y },
+      velocity: { x: blok.snelheidX, y: blok.snelheidY },
+      timer: {
+        elapsed: gameState.elapsedTime,
+        lastTime: Date.now(),
+      },
+    };
+    localStorage.setItem("jumpKingState", JSON.stringify(gameStateToSave));
+
+    // Pause music and go to settings
+    if (audioManager.currentTrack) {
+      if (Array.isArray(audioManager.currentTrack)) {
+        audioManager.currentTrack.forEach((track) => track.pause());
+      } else {
+        audioManager.currentTrack.pause();
+      }
+    }
+    gameState.isPaused = true;
+  }
+});
+
+window.addEventListener("load", () => {
+  const savedState = localStorage.getItem("jumpKingState");
+  if (savedState) {
+    const state = JSON.parse(savedState);
+    gameState.currentScreen = state.screen;
+    blok.x = state.position.x;
+    blok.y = state.position.y;
+    blok.snelheidX = state.velocity.x;
+    blok.snelheidY = state.velocity.y;
+
+    // Restore timer state
+    gameState.elapsedTime = state.timer.elapsed;
+    gameState.startTime = Date.now();
+    gameState.lastTime = gameState.startTime;
+    gameState.isPaused = true;
+  }
+});
+
 // Add updateAnimation() call in spelLus function before drawCharacter:
+// Keep game paused while showing confirmation
 function spelLus() {
+  updateTimer();
   ctx.clearRect(0, 0, canvas.width, canvas.height);
   const scaleX = canvas.width / TARGET_WIDTH;
   const scaleY = canvas.height / TARGET_HEIGHT;
   ctx.scale(scaleX, scaleY);
 
   drawScreen(gameState.currentScreen, 0);
-
-  updateAnimation(); // Add this line
+  updateAnimation();
   drawCharacter();
+  drawTimer();
+  // Only draw menu if we're actually paused
+  if (gameState.isPaused) {
+    drawMenu();
+  }
 
   ctx.setTransform(1, 0, 0, 1, 0, 0);
-  updateBlok();
+  if (!gameState.isPaused) {
+    updateBlok();
+  }
   requestAnimationFrame(spelLus);
 }
 
@@ -775,7 +862,12 @@ window.addEventListener("keydown", (e) => {
     blok.snelheidX = 0;
     blok.snelheidY = 0;
   }
-
+  if (e.code === "Escape") {
+    gameState.isPaused = !gameState.isPaused;
+    if (!gameState.isPaused) {
+      gameState.lastTime = Date.now();
+    }
+  }
   if (!gameState.adminMode) {
     if (!blok.opGrond) return;
     if (e.code === "Space" && !blok.isChargingJump) {
@@ -785,6 +877,62 @@ window.addEventListener("keydown", (e) => {
     }
   }
 });
+let showingConfirmation = false;
+
+function drawMenu() {
+  ctx.fillStyle = "rgba(0, 0, 0, 0.7)";
+  ctx.fillRect(0, 0, TARGET_WIDTH, TARGET_HEIGHT);
+
+  const buttons = [
+    { text: "Return To Game", y: TARGET_HEIGHT / 2 - 80 },
+    { text: audioManager.isSoundEnabled ? "Turn Off Sound" : "Turn On Sound", y: TARGET_HEIGHT / 2 },
+    { text: "Reset Game", y: TARGET_HEIGHT / 2 + 80 },
+  ];
+
+  ctx.font = "30px Arial";
+  ctx.textAlign = "center";
+
+  buttons.forEach((button) => {
+    ctx.fillStyle = "#3D283A";
+    ctx.fillRect(TARGET_WIDTH / 2 - 150, button.y - 25, 300, 50);
+    ctx.fillStyle = "white";
+    ctx.fillText(button.text, TARGET_WIDTH / 2, button.y + 10);
+  });
+}
+
+canvas.addEventListener("click", (e) => {
+  if (!gameState.isPaused) return;
+
+  const rect = canvas.getBoundingClientRect();
+  const x = (e.clientX - rect.left) * (TARGET_WIDTH / canvas.width);
+  const y = (e.clientY - rect.top) * (TARGET_HEIGHT / canvas.height);
+
+  if (x >= TARGET_WIDTH / 2 - 150 && x <= TARGET_WIDTH / 2 + 150) {
+    if (y >= TARGET_HEIGHT / 2 - 105 && y <= TARGET_HEIGHT / 2 - 55) {
+      gameState.isPaused = false;
+      if (audioManager.isSoundEnabled) {
+        audioManager.playTrackForLevel(gameState.currentScreen + 1);
+      }
+    } else if (y >= TARGET_HEIGHT / 2 - 25 && y <= TARGET_HEIGHT / 2 + 25) {
+      audioManager.toggleSound();
+    } else if (y >= TARGET_HEIGHT / 2 + 55 && y <= TARGET_HEIGHT / 2 + 105) {
+      // Reset game and exit menu
+      resetGame();
+      gameState.currentScreen = 0;
+      blok.x = TARGET_WIDTH / 2 - 25;
+      blok.y = TARGET_HEIGHT - GROUND_HEIGHT - 50;
+      blok.snelheidX = 0;
+      blok.snelheidY = 0;
+      gameState.isPaused = false;
+    }
+  }
+});
+function resetGame() {
+  gameState.startTime = Date.now();
+  gameState.lastTime = gameState.startTime;
+  gameState.elapsedTime = 0;
+  gameState.isPaused = false;
+}
 
 window.addEventListener("keyup", (e) => {
   keyboard[e.code] = false;
