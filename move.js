@@ -273,13 +273,13 @@ const audioManager = {
 
   // Geluidseffecten
   sfx: {
-    splat: new Audio("sound/movement/king_splat.wav"),  // Als je hard valt
-    land: new Audio("sound/movement/king_land.wav"),    // Als je landt
-    jump: new Audio("sound/movement/king_jump.wav"),    // Als je springt
-    bump: new Audio("sound/movement/king_bump.wav"),    // Als je botst
+    splat: new Audio("sound/movement/king_splat.wav"), // Als je hard valt
+    land: new Audio("sound/movement/king_land.wav"), // Als je landt
+    jump: new Audio("sound/movement/king_jump.wav"), // Als je springt
+    bump: new Audio("sound/movement/king_bump.wav"), // Als je botst
   },
-  lastBumpTime: 0,      // Laatste botsing tijd
-  bumpCooldown: 150,    // Wachttijd tussen botsing geluiden
+  lastBumpTime: 0, // Laatste botsing tijd
+  bumpCooldown: 150, // Wachttijd tussen botsing geluiden
 
   // Speel een geluid effect
   playSfx(soundName) {
@@ -327,9 +327,9 @@ const audioManager = {
   // Stop huidige muziek
   stopCurrentTrack() {
     if (!this.currentTrack) return;
-    
+
     if (Array.isArray(this.currentTrack)) {
-      this.currentTrack.forEach(track => {
+      this.currentTrack.forEach((track) => {
         track.pause();
         track.currentTime = 0;
       });
@@ -351,7 +351,7 @@ const audioManager = {
     this.currentTrack = newTrack;
 
     if (Array.isArray(newTrack)) {
-      newTrack.forEach(track => {
+      newTrack.forEach((track) => {
         track.loop = true;
         track.play();
       });
@@ -359,7 +359,7 @@ const audioManager = {
       newTrack.loop = true;
       newTrack.play();
     }
-  }
+  },
 };
 
 const keyboard = {
@@ -492,25 +492,21 @@ function checkPlatformCollisions(nextX, nextY) {
     y: nextY,
   };
 }
-
+// Update de speedrun timer
 function updateTimer() {
-  if (
-    !gameState.isPaused &&
-    !gameState.timerStopped &&
-    gameState.startTime &&
-    !showingConfirmation &&
-    !gameState.hasWon
-  ) {
-    const now = Date.now();
-    if (gameState.lastTime) {
-      gameState.elapsedTime += now - gameState.lastTime;
-    }
-    gameState.lastTime = now;
-  } else {
-    gameState.lastTime = Date.now(); // Reset lastTime when paused
+  const timerShouldRun =
+    !gameState.isPaused && !gameState.timerStopped && gameState.startTime && !showingConfirmation && !gameState.hasWon;
+
+  const now = Date.now();
+
+  if (timerShouldRun && gameState.lastTime) {
+    gameState.elapsedTime += now - gameState.lastTime;
   }
+
+  gameState.lastTime = now;
 }
 
+// Teken de timer op het scherm
 function drawTimer() {
   const totalSeconds = Math.floor(gameState.elapsedTime / 1000);
   const hours = Math.floor(totalSeconds / 3600);
@@ -530,21 +526,27 @@ function drawTimer() {
   ctx.restore();
 }
 
+// Update de spring lading
 function updateJumpCharge() {
   if (blok.isChargingJump) {
+    // Spring laden
     spriteSheet.currentAnimation = "charging";
     blok.jumpChargeTime += 16;
     let chargeProgress = Math.min(blok.jumpChargeTime / blok.maxChargeTime, 1);
     blok.springKracht = blok.minJumpForce + (blok.maxJumpForce - blok.minJumpForce) * chargeProgress;
 
+    // Spring als maximaal geladen
     if (chargeProgress >= 1) {
       executeJump();
     }
-  } else if (blok.opGrond && Math.abs(blok.snelheidX) < 0.1) {
+  }
+  // Idle animatie als je stilstaat
+  else if (blok.opGrond && Math.abs(blok.snelheidX) < 0.1) {
     spriteSheet.currentAnimation = "idle";
   }
 }
 
+// Spring uitvoeren als je de knop loslaat
 function executeJump() {
   if (blok.springKracht > 0) {
     audioManager.playSfx("jump");
@@ -570,16 +572,17 @@ function executeJump() {
 
     blok.isChargingJump = false;
     blok.opGrond = false;
-    blok.isWalking = false;
   }
 }
 
+// Reset knoppen als tab unfocused is
 window.addEventListener("blur", () => {
   keyboard.ArrowLeft = false;
   keyboard.ArrowRight = false;
   keyboard.Space = false;
 });
 
+// Muur botsing afhandelen
 function handleWallCollision(isLeftWall) {
   if (!blok.opGrond) {
     audioManager.playSfx("bump");
@@ -593,6 +596,7 @@ function handleWallCollision(isLeftWall) {
   }
 }
 
+// Update de sprite animatie frames
 function updateAnimation() {
   const animation = spriteSheet.animations[spriteSheet.currentAnimation];
   if (animation.frames && Array.isArray(animation.frames)) {
@@ -604,39 +608,34 @@ function updateAnimation() {
   }
 }
 
-// Add event listener for when tab/window closes
+// Game status opslaan als tab/window sluit
 window.addEventListener("visibilitychange", () => {
   if (document.hidden) {
     gameState.isPaused = true;
     const gameStateToSave = {
       screen: gameState.currentScreen,
-      position: {
-        x: blok.x,
-        y: blok.y,
-      },
-      velocity: {
-        x: blok.snelheidX,
-        y: blok.snelheidY,
-      },
+      position: { x: blok.x, y: blok.y },
+      velocity: { x: blok.snelheidX, y: blok.snelheidY },
       timer: {
         elapsed: gameState.elapsedTime,
         lastTime: Date.now(),
       },
     };
     localStorage.setItem("jumpKingState", JSON.stringify(gameStateToSave));
+
+    // Muziek pauzeren
+    if (audioManager.currentTrack) {
+      if (Array.isArray(audioManager.currentTrack)) {
+        audioManager.currentTrack.forEach((track) => track.pause());
+      } else {
+        audioManager.currentTrack.pause();
+      }
+    }
   } else {
-    // When returning to tab, update lastTime to prevent time counting while away
     gameState.lastTime = Date.now();
   }
-  if (audioManager.currentTrack) {
-    if (Array.isArray(audioManager.currentTrack)) {
-      audioManager.currentTrack.forEach((track) => track.pause());
-    } else {
-      audioManager.currentTrack.pause();
-    }
-  }
 });
-
+// Laad game state als je de pagina opent
 window.addEventListener("load", () => {
   if (localStorage.getItem("hasCrownForever") === "true") {
     gameState.showCrownSprite = true;
@@ -651,7 +650,7 @@ window.addEventListener("load", () => {
     blok.snelheidX = state.velocity.x;
     blok.snelheidY = state.velocity.y;
 
-    // Reset timer state when loading
+    // Timer resetten bij laden
     gameState.elapsedTime = state.timer.elapsed;
     gameState.startTime = Date.now();
     gameState.lastTime = gameState.startTime;
@@ -659,8 +658,7 @@ window.addEventListener("load", () => {
   }
 });
 
-// Add updateAnimation() call in spelLus function before drawCharacter:
-// Keep game paused while showing confirmation
+// Main game loop
 function spelLus() {
   updateTimer();
   ctx.clearRect(0, 0, canvas.width, canvas.height);
@@ -674,7 +672,7 @@ function spelLus() {
   drawTimer();
 
   if (gameState.hasWon) {
-    // Fade to black
+    // Fade naar zwart
     ctx.fillStyle = `rgba(0, 0, 0, ${gameState.fadeAlpha})`;
     ctx.fillRect(0, 0, TARGET_WIDTH, TARGET_HEIGHT);
 
@@ -688,33 +686,31 @@ function spelLus() {
     } else {
       gameState.showStats = true;
     }
+
     const totalSeconds = Math.floor(gameState.elapsedTime / 1000);
     const hours = Math.floor(totalSeconds / 3600);
     const minutes = Math.floor((totalSeconds % 3600) / 60);
     const seconds = totalSeconds % 60;
     const timeString = `${hours}:${minutes}:${seconds}`;
 
+    // Check en update beste tijd
     const currentBest = localStorage.getItem("bestTime");
     if (!currentBest || totalSeconds < parseInt(currentBest)) {
       localStorage.setItem("bestTime", timeString);
     }
 
     if (gameState.showStats) {
-      // Draw stats screen
+      // Win scherm tekenen
       ctx.font = "48px Arial";
       ctx.fillStyle = "white";
       ctx.textAlign = "center";
       ctx.fillText("Congratulations! You Got the Crown!", TARGET_WIDTH / 2, TARGET_HEIGHT / 3);
 
-      // Show time
-      const totalSeconds = Math.floor(gameState.elapsedTime / 1000);
-      const hours = Math.floor(totalSeconds / 3600);
-      const minutes = Math.floor((totalSeconds % 3600) / 60);
-      const seconds = totalSeconds % 60;
+      // Tijd laten zien
       const timeString = `Time: ${hours}:${minutes}:${seconds}`;
       ctx.fillText(timeString, TARGET_WIDTH / 2, TARGET_HEIGHT / 2);
 
-      // Draw restart button
+      // Restart knop
       ctx.fillStyle = "#3D283A";
       ctx.fillRect(TARGET_WIDTH / 2 - 100, (TARGET_HEIGHT * 2) / 3 - 25, 200, 50);
       ctx.fillStyle = "white";
@@ -723,7 +719,7 @@ function spelLus() {
     }
   }
 
-  // Only draw menu if we're actually paused
+  // Menu tekenen als je gepauzeerd bent
   if (gameState.isPaused) {
     drawMenu();
   }
@@ -734,10 +730,12 @@ function spelLus() {
   }
   requestAnimationFrame(spelLus);
 }
-
 function updateBlok() {
+  // Hoofdbeweging (behalve tijdens victory animatie of in admin mode)
   if (!gameState.isPlayingVictoryAnimation || gameState.adminMode) {
     const currentLevel = levels[gameState.currentScreen];
+
+    // Check of speler op driehoek staat
     const isOnTriangle =
       currentLevel.triangles &&
       currentLevel.triangles.some((triangle) => {
@@ -745,6 +743,7 @@ function updateBlok() {
           x: blok.x + blok.breedte / 2,
           y: blok.y + blok.hoogte,
         };
+
         const inXBounds =
           triangle.direction === "right"
             ? blok.x + blok.breedte >= triangle.x1 && blok.x <= triangle.x2
@@ -761,6 +760,7 @@ function updateBlok() {
         return Math.abs(playerBottom.y - expectedY) < 4;
       });
 
+    // Admin mode beweging
     if (gameState.adminMode) {
       const flySpeed = 5;
       if (keyboard.ArrowLeft) blok.x -= flySpeed;
@@ -782,15 +782,15 @@ function updateBlok() {
       return;
     }
 
-    if (gameState.isPlayingVictoryAnimation) {
-      return;
-    }
+    if (gameState.isPlayingVictoryAnimation) return;
+
+    // Driehoek beweging
     if (isOnTriangle) {
       keyboard.ArrowLeft = false;
       keyboard.ArrowRight = false;
       keyboard.Space = false;
       blok.isChargingJump = false;
-      blok.isWalking = false; // Get the current triangle
+      blok.isWalking = false;
 
       const triangle = currentLevel.triangles.find((t) => {
         const playerBottom = {
@@ -807,8 +807,9 @@ function updateBlok() {
         blok.snelheidX = Math.max(-3, Math.min(blok.snelheidX, 3));
         blok.snelheidY = Math.abs(slope * blok.snelheidX);
       }
-    } // Platform edge detection
+    }
 
+    // Platform rand detectie
     if (blok.opGrond) {
       let isOnPlatform = false;
       for (const platform of currentLevel.platforms) {
@@ -838,8 +839,7 @@ function updateBlok() {
 
     updateJumpCharge();
 
-    // Add crown collision detection in updateBlok
-
+    // Animatie updates
     if (blok.isChargingJump) {
       spriteSheet.currentAnimation = "charging";
     }
@@ -857,6 +857,7 @@ function updateBlok() {
       blok.hasCollided = false;
     }
 
+    // Stun check
     if (blok.isStunned) {
       spriteSheet.currentAnimation = "knocked";
       blok.snelheidX = 0;
@@ -870,6 +871,7 @@ function updateBlok() {
       blok.kleur = blok.normalColor;
     }
 
+    // Loop beweging
     if (blok.opGrond && !blok.isChargingJump && !isOnTriangle) {
       let nextPosition = blok.x;
       if (keyboard.ArrowLeft) {
@@ -888,6 +890,7 @@ function updateBlok() {
       blok.x = nextPosition;
     }
 
+    // Bereken volgende positie
     let nextX = blok.x + blok.snelheidX;
     let nextY = blok.y + blok.snelheidY;
 
@@ -895,6 +898,7 @@ function updateBlok() {
     nextX = collision.x;
     nextY = collision.y;
 
+    // Scherm grenzen
     if (nextX < 0) {
       nextX = 0;
       blok.snelheidX = 0;
@@ -904,6 +908,7 @@ function updateBlok() {
       blok.snelheidX = 0;
     }
 
+    // Level overgangen
     if (nextY + blok.hoogte < 0 && gameState.currentScreen < levels.length - 1) {
       gameState.screenTransition.active = true;
       gameState.screenTransition.targetOffset = TARGET_HEIGHT;
@@ -920,20 +925,16 @@ function updateBlok() {
       audioManager.playTrackForLevel(gameState.currentScreen + 1);
     }
 
+    // Grond check voor eerste level
     if (gameState.currentScreen === 0 && nextY + blok.hoogte > TARGET_HEIGHT - GROUND_HEIGHT) {
       nextY = TARGET_HEIGHT - GROUND_HEIGHT - blok.hoogte;
       blok.snelheidY = 0;
       blok.snelheidX = 0;
       blok.opGrond = true;
     }
-    // Right before blok.x = nextX and blok.y = nextY
-    if (gameState.currentScreen === 14) {
-      // Level 15
-      // Draw collision box for debugging
-      // ctx.strokeStyle = "red";
-      // ctx.strokeRect(710, 240, 50, 20);
 
-      // More generous collision detection
+    // Crown collectie in laatste level
+    if (gameState.currentScreen === 14) {
       if (nextX + blok.breedte > 740 && nextX < 780 && nextY + blok.hoogte > 240 && nextY < 260) {
         gameState.hasCrown = true;
         gameState.showCrownSprite = true;
@@ -953,12 +954,12 @@ function updateBlok() {
               console.log("Executing jump");
               gameState.isPlayingVictoryAnimation = false;
 
-              // Use actual full charge jump values
               blok.springKracht = blok.maxJumpForce;
               blok.snelheidY = -blok.maxJumpForce * 1.3;
               blok.snelheidX = blok.maxHorizontalForce;
               blok.opGrond = false;
               spriteSheet.facingRight = true;
+              audioManager.playSfx("jump");
 
               setTimeout(() => {
                 gameState.hasWon = true;
@@ -969,39 +970,44 @@ function updateBlok() {
       }
     }
 
+    // Update eindpositie
     blok.x = nextX;
     blok.y = nextY;
   } else {
-    // Only victory animation movement
+    // Victory animatie beweging
     blok.x += blok.snelheidX;
     blok.y += blok.snelheidY;
   }
 }
+// Laad crown afbeelding
 const crownImage = new Image();
 crownImage.src = "crown.png";
 
+// Teken het level
 function drawScreen(screenIndex, offset) {
   const level = levels[screenIndex];
 
+  // Teken achtergrond kleur
   if (level.backgroundColor) {
     ctx.fillStyle = level.backgroundColor;
     ctx.fillRect(0, 0, TARGET_WIDTH, TARGET_HEIGHT);
   }
 
+  // Teken achtergrond afbeelding
   if (backgroundImages[screenIndex + 1]) {
     ctx.drawImage(backgroundImages[screenIndex + 1], 0, -offset, TARGET_WIDTH, TARGET_HEIGHT);
   }
 
-  // Then in drawScreen
+  // Teken crown in laatste level
   if (screenIndex === 14 && !gameState.hasCrown && !gameState.isPlayingVictoryAnimation) {
     ctx.drawImage(crownImage, 710, 250, 100, 100);
   }
 
-  // Draw ground
+  // Teken grond
   ctx.fillStyle = GROUND_COLOR;
   ctx.fillRect(0, level.ground.y - offset, TARGET_WIDTH, level.ground.height);
 
-  // Draw platforms
+  // Teken platforms
   for (const platform of level.platforms) {
     ctx.fillStyle = platform.color || "#666666";
     ctx.fillRect(platform.x, platform.y - offset, platform.width, platform.height);
@@ -1013,6 +1019,7 @@ function drawScreen(screenIndex, offset) {
     }
   }
 
+  // Teken driehoeken
   if (level.triangles) {
     for (const triangle of level.triangles) {
       ctx.fillStyle = triangle.color || level.triangleColor || "#888888";
@@ -1029,29 +1036,36 @@ function drawScreen(screenIndex, offset) {
         ctx.stroke();
       }
     }
-  } // Draw detection points
-  ctx.fillStyle = "yellow";
-  ctx.beginPath();
-  ctx.arc(blok.x, blok.y + blok.hoogte, 3, 0, Math.PI * 2);
-  ctx.fill();
+  }
 
-  ctx.beginPath();
-  ctx.arc(blok.x + blok.breedte, blok.y + blok.hoogte, 3, 0, Math.PI * 2);
-  ctx.fill();
+  // Teken collision detectie punten
+  // ctx.fillStyle = "yellow";
+  // ctx.beginPath();
+  // ctx.arc(blok.x, blok.y + blok.hoogte, 3, 0, Math.PI * 2);
+  // ctx.fill();
 
+  // ctx.beginPath();
+  // ctx.arc(blok.x + blok.breedte, blok.y + blok.hoogte, 3, 0, Math.PI * 2);
+  // ctx.fill();
+
+  // Teken voorgrond afbeelding
   if (foregroundImages[screenIndex + 1]) {
     ctx.drawImage(foregroundImages[screenIndex + 1], 0, -offset, TARGET_WIDTH, TARGET_HEIGHT);
   }
 }
 
+// Toetsenbord input
 window.addEventListener("keydown", (e) => {
   keyboard[e.code] = true;
 
-  if (e.code === "KeyP") {
-    gameState.adminMode = !gameState.adminMode;
-    blok.snelheidX = 0;
-    blok.snelheidY = 0;
-  }
+  // Admin mode toggle
+  // if (e.code === "KeyP") {
+  //   gameState.adminMode = !gameState.adminMode;
+  //   blok.snelheidX = 0;
+  //   blok.snelheidY = 0;
+  // }
+
+  // Pauze toggle
   if (e.code === "Escape") {
     gameState.isPaused = !gameState.isPaused;
     if (!gameState.isPaused) {
@@ -1059,6 +1073,7 @@ window.addEventListener("keydown", (e) => {
     }
   }
 
+  // Spring laden
   if (!gameState.adminMode) {
     if (!blok.opGrond) return;
     if (e.code === "Space" && !blok.isChargingJump) {
@@ -1068,20 +1083,26 @@ window.addEventListener("keydown", (e) => {
     }
   }
 });
+
+// Variable om bij te houden of er een bevestiging wordt getoond
 let showingConfirmation = false;
 
+// Functie om het pauze menu te tekenen
 function drawMenu() {
+  // Canvas instellingen opslaan en resetten
   ctx.save();
   ctx.setTransform(1, 0, 0, 1, 0, 0);
 
+  // Schaal berekenen voor responsive weergave
   const scaleX = canvas.width / TARGET_WIDTH;
   const scaleY = canvas.height / TARGET_HEIGHT;
   ctx.scale(scaleX, scaleY);
 
+  // Halftransparante zwarte achtergrond
   ctx.fillStyle = "rgba(0, 0, 0, 0.7)";
   ctx.fillRect(0, 0, TARGET_WIDTH, TARGET_HEIGHT);
 
-  // Add best time display at top
+  // Beste tijd ophalen en weergeven
   const bestTime = localStorage.getItem("bestTime");
   if (bestTime) {
     ctx.font = "30px Arial";
@@ -1089,31 +1110,25 @@ function drawMenu() {
     ctx.textAlign = "center";
     ctx.fillText(`Best Time: ${bestTime}`, TARGET_WIDTH / 2, TARGET_HEIGHT / 4);
   }
+
+  // Menu knoppen definieren
   const buttons = [
-    {
-      text: "Return To Game",
-      y: TARGET_HEIGHT / 2 - 80,
-    },
-    {
-      text: audioManager.isSoundEnabled ? "Turn Off Sound" : "Turn On Sound",
-      y: TARGET_HEIGHT / 2,
-    },
-    {
-      text: "Reset Game",
-      y: TARGET_HEIGHT / 2 + 80,
-    },
+    { text: "Return To Game", y: TARGET_HEIGHT / 2 - 80 },
+    { text: audioManager.isSoundEnabled ? "Turn Off Sound" : "Turn On Sound", y: TARGET_HEIGHT / 2 },
+    { text: "Reset Game", y: TARGET_HEIGHT / 2 + 80 },
   ];
 
+  // Knoppen tekenen
   ctx.font = "30px Arial";
   ctx.textAlign = "center";
-
   buttons.forEach((button) => {
     ctx.fillStyle = "#3D283A";
     ctx.fillRect(TARGET_WIDTH / 2 - 150, button.y - 25, 300, 50);
     ctx.fillStyle = "white";
     ctx.fillText(button.text, TARGET_WIDTH / 2, button.y + 10);
   });
-  // Instructions below buttons
+
+  // Besturingsinstructies onderaan
   ctx.font = "24px Arial";
   ctx.fillStyle = "white";
   ctx.textAlign = "center";
@@ -1124,6 +1139,7 @@ function drawMenu() {
   ctx.restore();
 }
 
+// Klik handler voor menu knoppen
 canvas.addEventListener("click", (e) => {
   if (!gameState.isPaused) return;
 
@@ -1132,31 +1148,31 @@ canvas.addEventListener("click", (e) => {
   const y = (e.clientY - rect.top) * (TARGET_HEIGHT / canvas.height);
 
   if (x >= TARGET_WIDTH / 2 - 150 && x <= TARGET_WIDTH / 2 + 150) {
+    // Return to game button
     if (y >= TARGET_HEIGHT / 2 - 105 && y <= TARGET_HEIGHT / 2 - 55) {
       gameState.isPaused = false;
       if (audioManager.isSoundEnabled) {
         audioManager.playTrackForLevel(gameState.currentScreen + 1);
       }
-    } else if (y >= TARGET_HEIGHT / 2 - 25 && y <= TARGET_HEIGHT / 2 + 25) {
+    } 
+    // Sound toggle button
+    else if (y >= TARGET_HEIGHT / 2 - 25 && y <= TARGET_HEIGHT / 2 + 25) {
       audioManager.toggleSound();
     }
-  }
-  if (
-    x >= TARGET_WIDTH / 2 - 100 &&
-    x <= TARGET_WIDTH / 2 + 100 &&
-    y >= (TARGET_HEIGHT * 2) / 3 - 25 &&
-    y <= (TARGET_HEIGHT * 2) / 3 + 25
-  ) {
-    resetGame();
+    // Reset button - update coordinates to match the button position
+    else if (y >= TARGET_HEIGHT / 2 + 55 && y <= TARGET_HEIGHT / 2 + 105) {
+      resetGame();
+    }
   }
 });
-
+// Klik handler voor eind statistieken
 canvas.addEventListener("click", (e) => {
   if (gameState.showStats) {
     const rect = canvas.getBoundingClientRect();
     const x = (e.clientX - rect.left) * (TARGET_WIDTH / canvas.width);
     const y = (e.clientY - rect.top) * (TARGET_HEIGHT / canvas.height);
 
+    // Reset knop in stats scherm
     if (
       x >= TARGET_WIDTH / 2 - 100 &&
       x <= TARGET_WIDTH / 2 + 100 &&
@@ -1168,7 +1184,9 @@ canvas.addEventListener("click", (e) => {
   }
 });
 
+// Functie om het spel te resetten naar beginstand
 function resetGame() {
+  // Reset timer en game status
   gameState.startTime = Date.now();
   gameState.lastTime = gameState.startTime;
   gameState.elapsedTime = 0;
@@ -1178,23 +1196,28 @@ function resetGame() {
   gameState.fadeAlpha = 0;
   gameState.showStats = false;
   gameState.timerStopped = false;
-  gameState.isPlayingVictoryAnimation = false; // Reset victory animation
+  gameState.isPlayingVictoryAnimation = false;
+  crownImage.src = "crown.png";
 
+  // Reset speler positie en beweging
   blok.x = TARGET_WIDTH / 2 - 25;
   blok.y = TARGET_HEIGHT - GROUND_HEIGHT - 50;
   blok.snelheidX = 0;
   blok.snelheidY = 0;
   blok.opGrond = true;
 
+  // Reset animatie en muziek
   spriteSheet.currentAnimation = "idle";
   spriteSheet.facingRight = true;
   audioManager.playTrackForLevel(1);
-  // Keep crown sprite if earned previously
+
+  // Behoud crown status als die al behaald was
   if (localStorage.getItem("hasCrownForever") === "true") {
     gameState.showCrownSprite = true;
   }
 }
 
+// Handler voor toetsen loslaten
 window.addEventListener("keyup", (e) => {
   keyboard[e.code] = false;
   if (e.code === "Space" && blok.isChargingJump) {
@@ -1202,7 +1225,9 @@ window.addEventListener("keyup", (e) => {
   }
 });
 
+// Update canvas grootte bij window resize
 window.addEventListener("resize", resizeCanvas);
 
+// Start game loop en muziek
 requestAnimationFrame(spelLus);
 audioManager.playTrackForLevel(1);

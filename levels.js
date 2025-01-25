@@ -1,12 +1,12 @@
-import { config } from "./config.js";
-
-const MIN_HEIGHT = 716;
-const FLOOR_HEIGHT = MIN_HEIGHT - 65;
-const MAX_RIGHT = 959;
-const MAX_LEFT = 0;
-const MAX_HEIGHT = 0;
+// Basis afmetingen voor het spel
+const MIN_HEIGHT = 716; // Minimum hoogte van het speelveld
+const FLOOR_HEIGHT = MIN_HEIGHT - 65; // Hoogte van de grond
+const MAX_RIGHT = 959; // Rechterkant van het speelveld
+const MAX_LEFT = 0; // Linkerkant van het speelveld
+const MAX_HEIGHT = 0; // Bovenkant van het speelveld
 
 const LEVEL_DATA = {
+    // Level 1 - Start level met basis platforms
   level1: {
     backgroundColor: "#456441",
     ground: { y: FLOOR_HEIGHT, height: 65 },
@@ -27,7 +27,7 @@ const LEVEL_DATA = {
       { x: 814, y: MIN_HEIGHT - 320, width: 130, height: 70 },
       { x: 235, y: MIN_HEIGHT - 515, width: 150, height: 135 },
       { x: 15, y: MIN_HEIGHT - 560, width: 145, height: 185 },
-
+      // Zijmuren
       { x: MAX_LEFT, y: 0, width: 15, height: MIN_HEIGHT },
       { x: MAX_RIGHT - 15, y: 0, width: 15, height: MIN_HEIGHT },
     ],
@@ -43,7 +43,7 @@ const LEVEL_DATA = {
       { x: 318, y: MIN_HEIGHT - 478, width: 115, height: 90 },
       { x: MAX_LEFT + 15, y: MIN_HEIGHT - 525, width: 112, height: 33 },
       { x: MAX_LEFT + 273, y: MIN_HEIGHT - 716, width: 142, height: 33 },
-
+      // Zijmuren
       { x: MAX_LEFT, y: 0, width: 15, height: MIN_HEIGHT },
       { x: MAX_RIGHT - 15, y: 0, width: 15, height: MIN_HEIGHT },
     ],
@@ -61,7 +61,7 @@ const LEVEL_DATA = {
       { x: 654, y: MIN_HEIGHT - 573, width: 142, height: 32, color: "#3b3834" },
       { x: 654, y: MAX_HEIGHT, width: 32, height: 31, color: "#3b3834" },
       { x: MAX_RIGHT - 95, y: MIN_HEIGHT - 450, width: 80, height: 32, color: "#16271C" },
-
+      // Zijmuren
       { x: MAX_LEFT, y: 0, width: 15, height: MIN_HEIGHT, color: "#16271C" },
       { x: MAX_RIGHT - 15, y: 0, width: 15, height: MIN_HEIGHT, color: "#16271C" },
     ],
@@ -86,7 +86,7 @@ const LEVEL_DATA = {
       { x: 80, y: MIN_HEIGHT - 540, width: 60, height: 31, color: "#45191B" },
 
       { x: 304, y: MAX_HEIGHT, width: 350, height: 31, color: "#45191B" },
-
+      // Zijmuren
       { x: MAX_LEFT, y: 0, width: 15, height: MIN_HEIGHT, color: "#45191B" },
       { x: MAX_RIGHT - 15, y: 0, width: 15, height: MIN_HEIGHT, color: "#45191B" },
     ],
@@ -111,7 +111,7 @@ const LEVEL_DATA = {
       { x: MAX_RIGHT - 800, y: MIN_HEIGHT - 492, width: 225, height: 32, color: "#193C3A" },
       { x: MAX_RIGHT - 800, y: MIN_HEIGHT - 573, width: 30, height: 82, color: "#193C3A" },
       { x: MAX_RIGHT - 845, y: MIN_HEIGHT - 573, width: 50, height: 30, color: "#193C3A" },
-
+      // Zijmuren
       { x: MAX_LEFT, y: 0, width: 15, height: MIN_HEIGHT, color: "#193C3A" },
       { x: MAX_RIGHT - 15, y: 0, width: 15, height: MIN_HEIGHT, color: "#193C3A" },
     ],
@@ -147,7 +147,7 @@ const LEVEL_DATA = {
 
       { x: MAX_LEFT + 375, y: MAX_HEIGHT + 480, width: 40, height: 32, color: "#193C3A" },
       { x: MAX_RIGHT - 685, y: MIN_HEIGHT - 237, width: 140, height: 3, color: "#193C3A" },
-
+      // Zijmuren
       { x: MAX_LEFT, y: 0, width: 15, height: MIN_HEIGHT, color: "#193C3A" },
       { x: MAX_RIGHT - 15, y: 0, width: 15, height: MIN_HEIGHT, color: "#193C3A" },
     ],
@@ -218,7 +218,7 @@ const LEVEL_DATA = {
       { x: MAX_LEFT + 175, y: MAX_HEIGHT + 100, width: 320, height: 84, color: "#193C3A" },
 
       { x: MAX_LEFT + 15, y: MAX_HEIGHT + 686, width: 160, height: 30, color: "#193C3A" },
-
+      // Zijmuren
       { x: MAX_LEFT, y: 0, width: 15, height: MIN_HEIGHT, color: "#193C3A" },
       { x: MAX_RIGHT - 15, y: 0, width: 15, height: MIN_HEIGHT, color: "#193C3A" },
     ],
@@ -289,7 +289,7 @@ const LEVEL_DATA = {
       { x: MAX_LEFT + 15, y: MAX_HEIGHT + 335, width: 50, height: 46, color: "#3D283A" },
 
       { x: MAX_LEFT + 126, y: MAX_HEIGHT + 590, width: 50, height: 46, color: "#3D283A" },
-
+      // Zijmuren
       { x: MAX_LEFT, y: 0, width: 15, height: MIN_HEIGHT, color: "#193C3A" },
       { x: MAX_RIGHT - 15, y: 0, width: 15, height: MIN_HEIGHT, color: "#193C3A" },
     ],
@@ -345,7 +345,7 @@ const LEVEL_DATA = {
       { x: MAX_RIGHT - 189, y: MAX_HEIGHT, width: 200, height: 60, color: "#193C3A" },
 
       { x: MAX_RIGHT - 800, y: MIN_HEIGHT - 630, width: 225, height: 60, color: "#193C3A" },
-
+      // Zijmuren
       { x: MAX_LEFT, y: 0, width: 15, height: MIN_HEIGHT, color: "#193C3A" },
       { x: MAX_RIGHT - 15, y: 0, width: 15, height: MIN_HEIGHT, color: "#193C3A" },
     ],
@@ -383,7 +383,7 @@ const LEVEL_DATA = {
       { x: MAX_LEFT + 225, y: MAX_HEIGHT, width: 60, height: 86, color: "#5c5c5c" },
 
       { x: MAX_RIGHT - 189, y: MIN_HEIGHT - 580, width: 50, height: 300, color: "#5c5c5c" },
-
+      // Zijmuren
       { x: MAX_RIGHT - 189, y: MIN_HEIGHT - 880, width: 50, height: 200, color: "#5c5c5c" },
       { x: MAX_RIGHT - 210, y: MIN_HEIGHT - 580, width: 50, height: 20, color: "#5c5c5c" },
     ],
