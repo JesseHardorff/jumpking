@@ -1,17 +1,28 @@
-const foregroundImages = {};
+// Import level data van levells.js
+import { getLevelData } from "./levels.js";
 
-// Load all foreground images from overlay folder
+// Canvas setup voor de game
+const canvas = document.getElementById("gameCanvas");
+const ctx = canvas.getContext("2d");
+const TARGET_WIDTH = 959;
+const TARGET_HEIGHT = 716;
+
+// Grond settings(is eigenlijk alleen voor level 1)
+const GROUND_HEIGHT = 65;
+const GROUND_COLOR = "#4a4a4a";
+
+// Plaatjes voor de voorgrond laden
+const foregroundImages = {};
 for (let i = 1; i <= 15; i++) {
   const img = new Image();
   img.src = `overlay/fg${i}.png`;
-  // Only store the image if it loads successfully
   img.onload = () => {
     foregroundImages[i] = img;
   };
 }
-const backgroundImages = {};
 
-// Load all background images from bg folder
+// Plaatjes voor de achtergrond laden
+const backgroundImages = {};
 for (let i = 1; i <= 15; i++) {
   const img = new Image();
   img.src = `bg/bg${i}.png`;
@@ -20,32 +31,7 @@ for (let i = 1; i <= 15; i++) {
   };
 }
 
-import { getLevelData } from "./levels.js";
-
-const TARGET_WIDTH = 959;
-const TARGET_HEIGHT = 716;
-const canvas = document.getElementById("gameCanvas");
-const ctx = canvas.getContext("2d");
-
-function resizeCanvas() {
-  const container = canvas.parentElement;
-  const containerAspect = container.clientWidth / container.clientHeight;
-  const targetAspect = TARGET_WIDTH / TARGET_HEIGHT;
-
-  if (containerAspect > targetAspect) {
-    canvas.height = container.clientHeight;
-    canvas.width = container.clientHeight * targetAspect;
-  } else {
-    canvas.width = container.clientWidth;
-    canvas.height = container.clientWidth / targetAspect;
-  }
-}
-
-resizeCanvas();
-
-const GROUND_HEIGHT = 65;
-const GROUND_COLOR = "#4a4a4a";
-
+// Alle levels inladen
 const levels = [
   getLevelData().level1,
   getLevelData().level2,
@@ -64,50 +50,69 @@ const levels = [
   getLevelData().level15,
 ];
 
+// Game status bijhouden
 const gameState = {
-  currentScreen: 0,
-  adminMode: false,
-  startTime: null,
-  elapsedTime: 0,
-  showCrownSprite: false,
-  hasCrown: false,
-  lastTime: null,
-  isPaused: true,
+  currentScreen: 0, // In welk level je zit
+  adminMode: false, // Admin mode aan/uit
+  startTime: null, // Wanneer je begint
+  elapsedTime: 0, // Hoelang je al speelt
+  lastTime: null, // Laatste tijd update
+  isPaused: true, // Pauze menu
+
+  // Crown stuff
+  showCrownSprite: false, // Of je crown sprite moet zien
+  hasCrown: false, // Of je crown hebt gepakt
+
+  // Win conditions
   hasWon: false,
-  fadeAlpha: 0,
   isPlayingVictoryAnimation: false,
   showStats: false,
+  fadeAlpha: 0,
+
+  // Screen transition
   screenTransition: {
     active: false,
     offset: 0,
     targetOffset: 0,
   },
 };
-const spriteSheet = {
-  image: new Image(),
+
+// Canvas grootte fixen als window size verandert
+function resizeCanvas() {
+  // Pak scherm grootte
+  const screen = canvas.parentElement;
+
+  // Check of het scherm breed of hoog is
+  if (screen.clientWidth / screen.clientHeight > TARGET_WIDTH / TARGET_HEIGHT) {
+    // Breed scherm - hoogte is basis
+    canvas.height = screen.clientHeight;
+    canvas.width = canvas.height * (TARGET_WIDTH / TARGET_HEIGHT);
+  } else {
+    // Hoog scherm - breedte is basis
+    canvas.width = screen.clientWidth;
+    canvas.height = canvas.width * (TARGET_HEIGHT / TARGET_WIDTH);
+  }
+}
+
+resizeCanvas();
+
+// Basis sprite settings voor beide sprites
+const baseSprite = {
   frameWidth: 32,
   frameHeight: 32,
   facingRight: true,
+  currentAnimation: "idle",
   animations: {
-    idle: {
-      x: 230,
-      y: 18,
-      frames: 1,
-    },
-    charging: {
-      x: 232,
-      y: 66,
-      frames: 1,
-    },
+    idle: { x: 230, y: 18, frames: 1 },
+    charging: { x: 232, y: 66, frames: 1 },
     walking: {
       frames: [
-        { x: 274, y: 18 }, // First walking frame
-        { x: 323, y: 18 }, // Second walking frame
-        { x: 370, y: 18 }, // Third walking frame
-        { x: 323, y: 18 }, // Second walking frame
+        { x: 274, y: 18 },
+        { x: 323, y: 18 },
+        { x: 370, y: 18 },
+        { x: 323, y: 18 },
       ],
-
-      frameDurations: [400, 200, 400, 200], // Duration for each frame in ms
+      frameDurations: [400, 200, 400, 200],
       currentFrame: 0,
       frameTimer: 0,
       reverse: false,
@@ -124,122 +129,59 @@ const spriteSheet = {
       frameTimer: 0,
       reverse: false,
     },
-    jumpUp: {
-      x: 278,
-      y: 58,
-      frames: 1,
-    },
-    jumpDown: {
-      x: 330,
-      y: 58,
-      frames: 1,
-    },
-    knocked: {
-      x: 376,
-      y: 66,
-      frames: 1,
-    },
-    bump: {
-      x: 232,
-      y: 114,
-      frames: 1,
-    },
+    jumpUp: { x: 278, y: 58, frames: 1 },
+    jumpDown: { x: 330, y: 58, frames: 1 },
+    knocked: { x: 376, y: 66, frames: 1 },
+    bump: { x: 232, y: 114, frames: 1 },
   },
-  currentAnimation: "idle",
+};
+
+// Maak sprites met eigen plaatje
+const spriteSheet = {
+  ...baseSprite,
+  image: new Image(),
 };
 spriteSheet.image.src = "spritesheet.png";
 
 const crownSprite = {
+  ...baseSprite,
   image: new Image(),
-  frameWidth: 32,
-  frameHeight: 32,
-  facingRight: true,
-  animations: {
-    idle: {
-      x: 230,
-      y: 18,
-      frames: 1,
-    },
-    charging: {
-      x: 232,
-      y: 66,
-      frames: 1,
-    },
-    walking: {
-      frames: [
-        { x: 274, y: 18 },
-        { x: 323, y: 18 },
-        { x: 370, y: 18 },
-        { x: 323, y: 18 },
-      ],
-      frameDurations: [400, 200, 400, 200],
-      currentFrame: 0,
-      frameTimer: 0,
-      reverse: false,
-    },
-    jumpUp: {
-      x: 278,
-      y: 58,
-      frames: 1,
-    },
-    jumpDown: {
-      x: 330,
-      y: 58,
-      frames: 1,
-    },
-    knocked: {
-      x: 376,
-      y: 66,
-      frames: 1,
-    },
-    bump: {
-      x: 232,
-      y: 114,
-      frames: 1,
-    },
-  },
-  currentAnimation: "idle",
 };
-
 crownSprite.image.src = "./crown-spritesheet.png";
-
 function drawCharacter() {
+  // Pak huidige animatie
   const animation = spriteSheet.animations[spriteSheet.currentAnimation];
 
+  // Pixel art scherp maken
   ctx.imageSmoothingEnabled = false;
   ctx.mozImageSmoothingEnabled = false;
   ctx.webkitImageSmoothingEnabled = false;
   ctx.msImageSmoothingEnabled = false;
 
+  // Frame groottes bepalen
   const frameWidth = spriteSheet.currentAnimation === "walking" ? 40 : spriteSheet.frameWidth;
-  const displayWidth = spriteSheet.currentAnimation === "walking" ? 75 : 60; // Add height adjustment for jumping animations
+  const displayWidth = spriteSheet.currentAnimation === "walking" ? 75 : 60;
 
-  const frameHeight =
-    spriteSheet.currentAnimation === "jumpUp" || spriteSheet.currentAnimation === "jumpDown"
-      ? 48
-      : spriteSheet.frameHeight;
-  const displayHeight =
-    spriteSheet.currentAnimation === "jumpUp" || spriteSheet.currentAnimation === "jumpDown" ? 90 : 60;
+  const isJumping = spriteSheet.currentAnimation === "jumpUp" || spriteSheet.currentAnimation === "jumpDown";
+  const frameHeight = isJumping ? 48 : spriteSheet.frameHeight;
+  const displayHeight = isJumping ? 90 : 60;
 
+  // Karakter in het midden zetten
   const xOffset = (blok.breedte - displayWidth) / 2;
   const yOffset = (blok.hoogte - displayHeight) / 2;
 
+  // Links/rechts kijken fixen
   ctx.save();
   if (!spriteSheet.facingRight) {
     ctx.scale(-1, 1);
     ctx.translate(-2 * (blok.x + xOffset) - displayWidth, 0);
   }
 
-  let sourceX, sourceY;
-  if (animation.frames && Array.isArray(animation.frames)) {
-    sourceX = animation.frames[animation.currentFrame].x;
-    sourceY = animation.frames[animation.currentFrame].y;
-  } else {
-    sourceX = animation.x;
-    sourceY = animation.y;
-  }
+  // Juiste frame uit spritesheet pakken
+  const { sourceX, sourceY } = getFrameCoordinates(animation);
 
-  ctx.drawImage(
+  // Karakter tekenen
+  drawSprite(
     spriteSheet.image,
     sourceX,
     sourceY,
@@ -251,9 +193,9 @@ function drawCharacter() {
     displayHeight
   );
 
-  // Draw crown spritesheet on top if enabled
+  // Crown tekenen als je die hebt
   if (gameState.showCrownSprite) {
-    ctx.drawImage(
+    drawSprite(
       crownSprite.image,
       sourceX,
       sourceY,
@@ -267,68 +209,86 @@ function drawCharacter() {
   }
 }
 
+// Helper functie voor frame coordinaten
+function getFrameCoordinates(animation) {
+  if (animation.frames && Array.isArray(animation.frames)) {
+    return {
+      sourceX: animation.frames[animation.currentFrame].x,
+      sourceY: animation.frames[animation.currentFrame].y,
+    };
+  }
+  return {
+    sourceX: animation.x,
+    sourceY: animation.y,
+  };
+}
+
+// Helper functie voor sprite tekenen
+function drawSprite(image, sx, sy, sw, sh, dx, dy, dw, dh) {
+  ctx.drawImage(image, sx, sy, sw, sh, dx, dy, dw, dh);
+}
 const blok = {
-  x: TARGET_WIDTH / 2 - 25,
-  y: TARGET_HEIGHT - GROUND_HEIGHT - 50,
-  breedte: 40,
-  hoogte: 50,
-  kleur: "red",
-  normalColor: "red",
-  stunnedColor: "purple",
-  fallDistance: 0,
-  fallThreshold: 400,
-  isStunned: false,
-  stunTimer: 0,
-  stunDuration: 800,
-  snelheidX: 0,
-  snelheidY: 0,
-  zwaartekracht: 0.1, //zwaartekracht: -0.0001,
-  springKracht: 0,
-  minJumpForce: 0.7,
-  maxJumpForce: 6.17,
-  minHorizontalForce: 2.7,
-  maxHorizontalForce: 3.0,
-  jumpChargeTime: 0,
-  maxChargeTime: 1500,
-  isChargingJump: false,
-  opGrond: true,
-  jumpDirection: 0,
-  bounceStrength: 0.47,
-  walkSpeed: 1.2,
-  isWalking: false,
-  isOnRamp: false,
-  lastTriangleSpeedX: null,
-  lastTriangleSpeedY: null,
-  hasCollided: false,
+  // Positie van karakter
+  x: TARGET_WIDTH / 2 - 25, // X positie in het midden op start
+  y: TARGET_HEIGHT - GROUND_HEIGHT - 50, // Y positie op de grond op start
+  breedte: 40, // Breedte van hitbox
+  hoogte: 50, // Hoogte van hitbox
+
+  // Stun eigenschappen
+  fallDistance: 0, // Hoe ver je valt
+  fallThreshold: 400, // Wanneer je stun krijgt
+  isStunned: false, // Of je gestunt bent
+  stunTimer: 0, // Hoelang je al gestunt bent
+  stunDuration: 800, // Hoe lang stun duurt
+
+  // Beweging
+  snelheidX: 0, // Links/rechts snelheid
+  snelheidY: 0, // Omhoog/omlaag snelheid
+  zwaartekracht: 0.1, // Hoe snel je valt
+
+  // Spring eigenschappen
+  springKracht: 0, // Huidige spring kracht
+  minJumpForce: 0.7, // Min spring hoogte
+  maxJumpForce: 6.17, // Max spring hoogte
+  minHorizontalForce: 2.7, // Min zijwaartse spring kracht
+  maxHorizontalForce: 3.0, // Max zijwaartse spring kracht
+  jumpChargeTime: 0, // Hoe lang je springt
+  maxChargeTime: 1500, // Max spring laad tijd
+  isChargingJump: false, // Of je aan het laden bent
+  opGrond: true, // Of je op de grond staat
+  bounceStrength: 0.47, // Hoe hard je stuitert
+  walkSpeed: 1.2, // Loop snelheid
+
+  // Collision checks
+  hasCollided: false, // Of je net gebotst bent
 };
 const audioManager = {
-  // Background music tracks
+  // Achtergrond muziek
   cricket: new Audio("sound/bg-music/cricket.wav"),
   riool: new Audio("sound/bg-music/riool.wav"),
   episch: new Audio("sound/bg-music/episch.mp3"),
-  sunrise: new Audio("sound/bg-music/sunrise.mp3"),
   wind: new Audio("sound/bg-music/wind.wav"),
   currentTrack: null,
   isSoundEnabled: true,
 
+  // Geluidseffecten
   sfx: {
-    splat: new Audio("sound/movement/king_splat.wav"),
-    land: new Audio("sound/movement/king_land.wav"),
-    jump: new Audio("sound/movement/king_jump.wav"),
-    bump: new Audio("sound/movement/king_bump.wav"),
+    splat: new Audio("sound/movement/king_splat.wav"),  // Als je hard valt
+    land: new Audio("sound/movement/king_land.wav"),    // Als je landt
+    jump: new Audio("sound/movement/king_jump.wav"),    // Als je springt
+    bump: new Audio("sound/movement/king_bump.wav"),    // Als je botst
   },
-  lastBumpTime: 0,
-  bumpCooldown: 150,
+  lastBumpTime: 0,      // Laatste botsing tijd
+  bumpCooldown: 150,    // Wachttijd tussen botsing geluiden
 
+  // Speel een geluid effect
   playSfx(soundName) {
     if (!this.isSoundEnabled) return;
 
     const sound = this.sfx[soundName];
     if (soundName === "bump") {
       const now = Date.now();
-      if (now - this.lastBumpTime < this.bumpCooldown) {
-        return;
-      }
+      if (now - this.lastBumpTime < this.bumpCooldown) return;
       this.lastBumpTime = now;
     }
     const clone = sound.cloneNode();
@@ -336,37 +296,17 @@ const audioManager = {
     clone.play();
   },
 
+  // Geluid aan/uit zetten
   toggleSound() {
     this.isSoundEnabled = !this.isSoundEnabled;
-
     if (this.isSoundEnabled) {
       this.playTrackForLevel(gameState.currentScreen + 1);
     } else {
-      if (Array.isArray(this.currentTrack)) {
-        this.currentTrack.forEach((track) => track.pause());
-      } else if (this.currentTrack) {
-        this.currentTrack.pause();
-      }
-      this.currentTrack = null;
+      this.stopCurrentTrack();
     }
   },
 
-  getTrackForLevel(levelNum) {
-    if (levelNum <= 5) {
-      this.cricket.volume = 1.0;
-      return [this.cricket];
-    } else if (levelNum === 6) {
-      this.cricket.volume = 0.7;
-      this.riool.volume = 0.3;
-      return [this.cricket, this.riool];
-    } else if (levelNum <= 10) {
-      return this.riool;
-    } else if (levelNum === 15) {
-      return this.wind;
-    } else {
-      return this.episch;
-    }
-  },
+  // Bepaal welke muziek voor welk level
   getTrackForLevel(levelNum) {
     if (levelNum <= 5) {
       this.cricket.volume = 1.0;
@@ -384,32 +324,34 @@ const audioManager = {
     }
   },
 
+  // Stop huidige muziek
+  stopCurrentTrack() {
+    if (!this.currentTrack) return;
+    
+    if (Array.isArray(this.currentTrack)) {
+      this.currentTrack.forEach(track => {
+        track.pause();
+        track.currentTime = 0;
+      });
+    } else {
+      this.currentTrack.pause();
+      this.currentTrack.currentTime = 0;
+    }
+    this.currentTrack = null;
+  },
+
+  // Start muziek voor een level
   playTrackForLevel(levelNum) {
     if (!this.isSoundEnabled) return;
 
     const newTrack = this.getTrackForLevel(levelNum);
+    if (this.currentTrack === this.episch && newTrack === this.episch) return;
 
-    // If current track is the same type as new track, don't restart it
-    if (this.currentTrack === this.episch && newTrack === this.episch) {
-      return;
-    }
-
-    // Stop current track(s)
-    if (this.currentTrack) {
-      if (Array.isArray(this.currentTrack)) {
-        this.currentTrack.forEach((track) => {
-          track.pause();
-          track.currentTime = 0;
-        });
-      } else {
-        this.currentTrack.pause();
-        this.currentTrack.currentTime = 0;
-      }
-    }
-
+    this.stopCurrentTrack();
     this.currentTrack = newTrack;
+
     if (Array.isArray(newTrack)) {
-      newTrack.forEach((track) => {
+      newTrack.forEach(track => {
         track.loop = true;
         track.play();
       });
@@ -417,8 +359,8 @@ const audioManager = {
       newTrack.loop = true;
       newTrack.play();
     }
-  },
-}; // Close audioManager object
+  }
+};
 
 const keyboard = {
   ArrowLeft: false,
@@ -429,9 +371,13 @@ const keyboard = {
   KeyP: false,
   Escape: false,
 };
+
 function checkPlatformCollisions(nextX, nextY) {
   if (gameState.isPlayingVictoryAnimation) {
-    return { x: nextX, y: nextY };
+    return {
+      x: nextX,
+      y: nextY,
+    };
   }
 
   const currentLevel = levels[gameState.currentScreen]; // In checkPlatformCollisions function, update the triangle collision check:
@@ -468,7 +414,10 @@ function checkPlatformCollisions(nextX, nextY) {
 
         blok.snelheidY = 0; // Instead, just set vertical speed to 0
         blok.opGrond = true;
-        return { x: nextX, y: nextY };
+        return {
+          x: nextX,
+          y: nextY,
+        };
       }
     }
   }
@@ -498,7 +447,10 @@ function checkPlatformCollisions(nextX, nextY) {
         }
         blok.fallDistance = 0;
 
-        return { x: nextX, y: nextY };
+        return {
+          x: nextX,
+          y: nextY,
+        };
       }
 
       if (blok.y >= platform.y + platform.height && nextY < platform.y + platform.height) {
@@ -508,7 +460,10 @@ function checkPlatformCollisions(nextX, nextY) {
         audioManager.playSfx("bump");
         blok.hasCollided = true;
         spriteSheet.currentAnimation = "bump";
-        return { x: nextX, y: nextY };
+        return {
+          x: nextX,
+          y: nextY,
+        };
       }
     }
 
@@ -532,8 +487,12 @@ function checkPlatformCollisions(nextX, nextY) {
     }
   }
 
-  return { x: nextX, y: nextY };
+  return {
+    x: nextX,
+    y: nextY,
+  };
 }
+
 function updateTimer() {
   if (
     !gameState.isPaused &&
@@ -651,8 +610,14 @@ window.addEventListener("visibilitychange", () => {
     gameState.isPaused = true;
     const gameStateToSave = {
       screen: gameState.currentScreen,
-      position: { x: blok.x, y: blok.y },
-      velocity: { x: blok.snelheidX, y: blok.snelheidY },
+      position: {
+        x: blok.x,
+        y: blok.y,
+      },
+      velocity: {
+        x: blok.snelheidX,
+        y: blok.snelheidY,
+      },
       timer: {
         elapsed: gameState.elapsedTime,
         lastTime: Date.now(),
@@ -1014,6 +979,7 @@ function updateBlok() {
 }
 const crownImage = new Image();
 crownImage.src = "crown.png";
+
 function drawScreen(screenIndex, offset) {
   const level = levels[screenIndex];
 
@@ -1124,9 +1090,18 @@ function drawMenu() {
     ctx.fillText(`Best Time: ${bestTime}`, TARGET_WIDTH / 2, TARGET_HEIGHT / 4);
   }
   const buttons = [
-    { text: "Return To Game", y: TARGET_HEIGHT / 2 - 80 },
-    { text: audioManager.isSoundEnabled ? "Turn Off Sound" : "Turn On Sound", y: TARGET_HEIGHT / 2 },
-    { text: "Reset Game", y: TARGET_HEIGHT / 2 + 80 },
+    {
+      text: "Return To Game",
+      y: TARGET_HEIGHT / 2 - 80,
+    },
+    {
+      text: audioManager.isSoundEnabled ? "Turn Off Sound" : "Turn On Sound",
+      y: TARGET_HEIGHT / 2,
+    },
+    {
+      text: "Reset Game",
+      y: TARGET_HEIGHT / 2 + 80,
+    },
   ];
 
   ctx.font = "30px Arial";
