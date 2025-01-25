@@ -65,7 +65,7 @@ const levels = [
 ];
 
 const gameState = {
-  currentScreen: 9,
+  currentScreen: 0,
   adminMode: false,
   startTime: null,
   elapsedTime: 0,
@@ -535,12 +535,20 @@ function checkPlatformCollisions(nextX, nextY) {
   return { x: nextX, y: nextY };
 }
 function updateTimer() {
-  if (!gameState.isPaused && gameState.startTime && !showingConfirmation) {
+  if (
+    !gameState.isPaused &&
+    !gameState.timerStopped &&
+    gameState.startTime &&
+    !showingConfirmation &&
+    !gameState.hasWon
+  ) {
     const now = Date.now();
     if (gameState.lastTime) {
       gameState.elapsedTime += now - gameState.lastTime;
     }
     gameState.lastTime = now;
+  } else {
+    gameState.lastTime = Date.now(); // Reset lastTime when paused
   }
 }
 
@@ -665,6 +673,10 @@ window.addEventListener("visibilitychange", () => {
 });
 
 window.addEventListener("load", () => {
+  if (localStorage.getItem("hasCrownForever") === "true") {
+    gameState.showCrownSprite = true;
+  }
+
   const savedState = localStorage.getItem("jumpKingState");
   if (savedState) {
     const state = JSON.parse(savedState);
@@ -674,7 +686,7 @@ window.addEventListener("load", () => {
     blok.snelheidX = state.velocity.x;
     blok.snelheidY = state.velocity.y;
 
-    // Restore timer state
+    // Reset timer state when loading
     gameState.elapsedTime = state.timer.elapsed;
     gameState.startTime = Date.now();
     gameState.lastTime = gameState.startTime;
@@ -701,10 +713,25 @@ function spelLus() {
     ctx.fillStyle = `rgba(0, 0, 0, ${gameState.fadeAlpha})`;
     ctx.fillRect(0, 0, TARGET_WIDTH, TARGET_HEIGHT);
 
+    setTimeout(() => {
+      blok.snelheidX = 0;
+      blok.snelheidY = 0;
+    }, 1000);
+
     if (gameState.fadeAlpha < 1) {
       gameState.fadeAlpha += 0.02;
     } else {
       gameState.showStats = true;
+    }
+    const totalSeconds = Math.floor(gameState.elapsedTime / 1000);
+    const hours = Math.floor(totalSeconds / 3600);
+    const minutes = Math.floor((totalSeconds % 3600) / 60);
+    const seconds = totalSeconds % 60;
+    const timeString = `${hours}:${minutes}:${seconds}`;
+
+    const currentBest = localStorage.getItem("bestTime");
+    if (!currentBest || totalSeconds < parseInt(currentBest)) {
+      localStorage.setItem("bestTime", timeString);
     }
 
     if (gameState.showStats) {
@@ -742,27 +769,6 @@ function spelLus() {
   }
   requestAnimationFrame(spelLus);
 }
-canvas.addEventListener("click", (e) => {
-  if (gameState.showStats) {
-    const rect = canvas.getBoundingClientRect();
-    const x = (e.clientX - rect.left) * (TARGET_WIDTH / canvas.width);
-    const y = (e.clientY - rect.top) * (TARGET_HEIGHT / canvas.height);
-
-    if (
-      x >= TARGET_WIDTH / 2 - 100 &&
-      x <= TARGET_WIDTH / 2 + 100 &&
-      y >= (TARGET_HEIGHT * 2) / 3 - 25 &&
-      y <= (TARGET_HEIGHT * 2) / 3 + 25
-    ) {
-      // Reset everything
-      resetGame();
-      gameState.hasWon = false;
-      gameState.fadeAlpha = 0;
-      gameState.showStats = false;
-      spriteSheet.image.src = "spritesheet.png";
-    }
-  }
-});
 
 function updateBlok() {
   if (!gameState.isPlayingVictoryAnimation || gameState.adminMode) {
@@ -959,13 +965,15 @@ function updateBlok() {
     if (gameState.currentScreen === 14) {
       // Level 15
       // Draw collision box for debugging
-      ctx.strokeStyle = "red";
-      ctx.strokeRect(710, 240, 50, 20);
+      // ctx.strokeStyle = "red";
+      // ctx.strokeRect(710, 240, 50, 20);
 
       // More generous collision detection
-      if (nextX + blok.breedte > 710 && nextX < 760 && nextY + blok.hoogte > 240 && nextY < 260) {
+      if (nextX + blok.breedte > 740 && nextX < 780 && nextY + blok.hoogte > 240 && nextY < 260) {
         gameState.hasCrown = true;
         gameState.showCrownSprite = true;
+        gameState.timerStopped = true;
+        localStorage.setItem("hasCrownForever", "true");
 
         if (gameState.hasCrown && blok.opGrond && !gameState.isPlayingVictoryAnimation) {
           console.log("Starting victory sequence");
@@ -987,8 +995,6 @@ function updateBlok() {
               blok.opGrond = false;
               spriteSheet.facingRight = true;
 
-              checkPlatformCollisions = () => ({ x: blok.x + blok.snelheidX, y: blok.y + blok.snelheidY });
-
               setTimeout(() => {
                 gameState.hasWon = true;
               }, 100);
@@ -1006,7 +1012,8 @@ function updateBlok() {
     blok.y += blok.snelheidY;
   }
 }
-
+const crownImage = new Image();
+crownImage.src = "crown.png";
 function drawScreen(screenIndex, offset) {
   const level = levels[screenIndex];
 
@@ -1018,13 +1025,10 @@ function drawScreen(screenIndex, offset) {
   if (backgroundImages[screenIndex + 1]) {
     ctx.drawImage(backgroundImages[screenIndex + 1], 0, -offset, TARGET_WIDTH, TARGET_HEIGHT);
   }
-  if (screenIndex === 14) {
-    // Index 14 is level 15 since arrays start at 0
-    const customImage = new Image();
-    customImage.src = "crown.png";
 
-    // Parameters: image, x, y, width, height
-    ctx.drawImage(customImage, 710, 250, 100, 100); // Adjust these numbers for position and size
+  // Then in drawScreen
+  if (screenIndex === 14 && !gameState.hasCrown && !gameState.isPlayingVictoryAnimation) {
+    ctx.drawImage(crownImage, 710, 250, 100, 100);
   }
 
   // Draw ground
@@ -1111,6 +1115,14 @@ function drawMenu() {
   ctx.fillStyle = "rgba(0, 0, 0, 0.7)";
   ctx.fillRect(0, 0, TARGET_WIDTH, TARGET_HEIGHT);
 
+  // Add best time display at top
+  const bestTime = localStorage.getItem("bestTime");
+  if (bestTime) {
+    ctx.font = "30px Arial";
+    ctx.fillStyle = "white";
+    ctx.textAlign = "center";
+    ctx.fillText(`Best Time: ${bestTime}`, TARGET_WIDTH / 2, TARGET_HEIGHT / 4);
+  }
   const buttons = [
     { text: "Return To Game", y: TARGET_HEIGHT / 2 - 80 },
     { text: audioManager.isSoundEnabled ? "Turn Off Sound" : "Turn On Sound", y: TARGET_HEIGHT / 2 },
@@ -1126,6 +1138,13 @@ function drawMenu() {
     ctx.fillStyle = "white";
     ctx.fillText(button.text, TARGET_WIDTH / 2, button.y + 10);
   });
+  // Instructions below buttons
+  ctx.font = "24px Arial";
+  ctx.fillStyle = "white";
+  ctx.textAlign = "center";
+  ctx.fillText("Arrows to move Left and Right", TARGET_WIDTH / 2, (TARGET_HEIGHT * 3) / 4);
+  ctx.fillText("Spacebar to Jump", TARGET_WIDTH / 2, (TARGET_HEIGHT * 3) / 4 + 40);
+  ctx.fillText("Arrow + Spacebar to Jump to the side", TARGET_WIDTH / 2, (TARGET_HEIGHT * 3) / 4 + 80);
 
   ctx.restore();
 }
@@ -1145,23 +1164,60 @@ canvas.addEventListener("click", (e) => {
       }
     } else if (y >= TARGET_HEIGHT / 2 - 25 && y <= TARGET_HEIGHT / 2 + 25) {
       audioManager.toggleSound();
-    } else if (y >= TARGET_HEIGHT / 2 + 55 && y <= TARGET_HEIGHT / 2 + 105) {
-      // Reset game and exit menu
+    }
+  }
+  if (
+    x >= TARGET_WIDTH / 2 - 100 &&
+    x <= TARGET_WIDTH / 2 + 100 &&
+    y >= (TARGET_HEIGHT * 2) / 3 - 25 &&
+    y <= (TARGET_HEIGHT * 2) / 3 + 25
+  ) {
+    resetGame();
+  }
+});
+
+canvas.addEventListener("click", (e) => {
+  if (gameState.showStats) {
+    const rect = canvas.getBoundingClientRect();
+    const x = (e.clientX - rect.left) * (TARGET_WIDTH / canvas.width);
+    const y = (e.clientY - rect.top) * (TARGET_HEIGHT / canvas.height);
+
+    if (
+      x >= TARGET_WIDTH / 2 - 100 &&
+      x <= TARGET_WIDTH / 2 + 100 &&
+      y >= (TARGET_HEIGHT * 2) / 3 - 25 &&
+      y <= (TARGET_HEIGHT * 2) / 3 + 25
+    ) {
       resetGame();
-      gameState.currentScreen = 0;
-      blok.x = TARGET_WIDTH / 2 - 25;
-      blok.y = TARGET_HEIGHT - GROUND_HEIGHT - 50;
-      blok.snelheidX = 0;
-      blok.snelheidY = 0;
-      gameState.isPaused = false;
     }
   }
 });
+
 function resetGame() {
   gameState.startTime = Date.now();
   gameState.lastTime = gameState.startTime;
   gameState.elapsedTime = 0;
   gameState.isPaused = false;
+  gameState.currentScreen = 0;
+  gameState.hasWon = false;
+  gameState.fadeAlpha = 0;
+  gameState.showStats = false;
+  gameState.timerStopped = false;
+  gameState.isPlayingVictoryAnimation = false; // Reset victory animation
+
+  blok.x = TARGET_WIDTH / 2 - 25;
+  blok.y = TARGET_HEIGHT - GROUND_HEIGHT - 50;
+  blok.snelheidX = 0;
+  blok.snelheidY = 0;
+  blok.opGrond = true;
+
+  spriteSheet.currentAnimation = "idle";
+  spriteSheet.facingRight = true;
+  audioManager.playTrackForLevel(1);
+  // Keep crown sprite if earned previously
+  if (localStorage.getItem("hasCrownForever") === "true") {
+    gameState.showCrownSprite = true;
+  }
 }
 
 window.addEventListener("keyup", (e) => {
