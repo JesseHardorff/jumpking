@@ -62,6 +62,7 @@ const gameState = {
   elapsedTime: 0, // Hoelang je al speelt
   lastTime: null, // Laatste tijd update
   isPaused: true, // Pauze menu
+  inCosmeticsMenu: false,
 
   // Crown stuff
   showCrownSprite: false, // Of je crown sprite moet zien
@@ -1123,9 +1124,11 @@ function drawMenu() {
 
   // Menu knoppen definieren
   const buttons = [
-    { text: "Return To Game", y: TARGET_HEIGHT / 2 - 80 },
-    { text: audioManager.isSoundEnabled ? "Turn Off Sound" : "Turn On Sound", y: TARGET_HEIGHT / 2 },
-    { text: "Reset Game", y: TARGET_HEIGHT / 2 + 80 },
+    { text: "Return To Game", y: TARGET_HEIGHT / 2 - 120 },
+    { text: audioManager.isSoundEnabled ? "Turn Off Sound" : "Turn On Sound", y: TARGET_HEIGHT / 2 - 40 },
+    { text: "Achievements", y: TARGET_HEIGHT / 2 + 40 },
+    { text: "Cosmetics", y: TARGET_HEIGHT / 2 + 120 },
+    { text: "Reset Game", y: TARGET_HEIGHT / 2 + 200 },
   ];
 
   // Knoppen tekenen
@@ -1139,17 +1142,20 @@ function drawMenu() {
   });
 
   // Besturingsinstructies onderaan
-  ctx.font = "24px Arial";
+  ctx.font = "15px Arial";
   ctx.fillStyle = "white";
-  ctx.textAlign = "center";
-  ctx.fillText("Arrows to move Left and Right", TARGET_WIDTH / 2, (TARGET_HEIGHT * 3) / 4);
-  ctx.fillText("Spacebar to Jump", TARGET_WIDTH / 2, (TARGET_HEIGHT * 3) / 4 + 40);
-  ctx.fillText("Arrow + Spacebar to Jump to the side", TARGET_WIDTH / 2, (TARGET_HEIGHT * 3) / 4 + 80);
+  ctx.textAlign = "left";
+
+  const rightMargin = TARGET_WIDTH - 300; // Distance from right edge
+  const verticalCenter = TARGET_HEIGHT / 2; // Middle of screen vertically
+
+  ctx.fillText("Arrows to move Left and Right", rightMargin, verticalCenter - 40);
+  ctx.fillText("Spacebar to Jump", rightMargin, verticalCenter);
+  ctx.fillText("Arrow + Spacebar to Jump to the side", rightMargin, verticalCenter + 40);
 
   ctx.restore();
 }
 
-// Klik handler voor menu knoppen
 canvas.addEventListener("click", (e) => {
   if (!gameState.isPaused) return;
 
@@ -1159,22 +1165,43 @@ canvas.addEventListener("click", (e) => {
 
   if (x >= TARGET_WIDTH / 2 - 150 && x <= TARGET_WIDTH / 2 + 150) {
     // Return to game button
-    if (y >= TARGET_HEIGHT / 2 - 105 && y <= TARGET_HEIGHT / 2 - 55) {
+    if (y >= TARGET_HEIGHT / 2 - 145 && y <= TARGET_HEIGHT / 2 - 95) {
       gameState.isPaused = false;
       if (audioManager.isSoundEnabled) {
         audioManager.playTrackForLevel(gameState.currentScreen + 1);
       }
     }
     // Sound toggle button
-    else if (y >= TARGET_HEIGHT / 2 - 25 && y <= TARGET_HEIGHT / 2 + 25) {
+    else if (y >= TARGET_HEIGHT / 2 - 65 && y <= TARGET_HEIGHT / 2 - 15) {
       audioManager.toggleSound();
     }
-    // Reset button - update coordinates to match the button position
-    else if (y >= TARGET_HEIGHT / 2 + 55 && y <= TARGET_HEIGHT / 2 + 105) {
+    // Achievements button
+    else if (y >= TARGET_HEIGHT / 2 + 15 && y <= TARGET_HEIGHT / 2 + 65) {
+      showAchievementsMenu();
+    }
+    // Cosmetics button
+    else if (y >= TARGET_HEIGHT / 2 + 95 && y <= TARGET_HEIGHT / 2 + 145) {
+      showCosmeticsMenu();
+    }
+    // Reset button
+    else if (y >= TARGET_HEIGHT / 2 + 175 && y <= TARGET_HEIGHT / 2 + 225) {
       resetGame();
     }
   }
 });
+
+function showAchievementsMenu() {
+  // Placeholder for achievements menu
+  console.log("Achievements menu opened");
+}
+
+function showCosmeticsMenu() {
+  console.log("qwdqwdqwdq menu opened");
+  // Clear the entire canvas first
+}
+
+// Crown toggle
+
 // Klik handler voor eind statistieken
 canvas.addEventListener("click", (e) => {
   if (gameState.showStats) {
